@@ -11,47 +11,44 @@ package
 	
 	import starling.core.Starling;
 
+	[SWF(backgroundColor = "#FFFFFF", frameRate = "60", width = "960", height = "640", embedAsCFF = "false")]
 	public class flumpy extends Sprite
 	{
 		public function flumpy()
 		{
-			var menu:ContextMenu = new ContextMenu();
-			menu.hideBuiltInItems();
-			this.contextMenu = menu;
+			addEventListener(Event.ADDED_TO_STAGE, onStage);
+		}
+		
+		private function onStage(...args):void
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			
-			if(this.stage)
-			{
-				this.stage.align = StageAlign.TOP_LEFT;
-				this.stage.scaleMode = StageScaleMode.NO_SCALE;
-			}
+			// init
+			stage.align = StageAlign.TOP_LEFT;
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			
+			contextMenu = new ContextMenu();
+			contextMenu.hideBuiltInItems();
 			
 			//pretends to be an iPhone Retina screen
 			DeviceCapabilities.dpi = 326;
 			DeviceCapabilities.screenPixelWidth = 960;
 			DeviceCapabilities.screenPixelHeight = 640;
 			
-			this.loaderInfo.addEventListener(Event.COMPLETE, loaderInfo_completeHandler);
+			start();
 		}
-		
-		private var _starling:Starling;
 		
 		private function start():void
 		{
-			this.graphics.clear();
+			// hm?
+			graphics.clear();
 			
 			Starling.handleLostContext = true;
 			Starling.multitouchEnabled = true;
-			//const MainType:Class = getDefinitionByName("feathers.examples.componentsExplorer.Main") as Class;
-			this._starling = new Starling(Main, this.stage);
-			this._starling.enableErrorChecking = false;
-			//this._starling.showStats = true;
-			//this._starling.showStatsAt(HAlign.LEFT, VAlign.BOTTOM);
-			this._starling.start();
-		}
-		
-		private function loaderInfo_completeHandler(event:Event):void
-		{
-			this.start();
+			
+			const _starling:Starling = new Starling(Main, stage);
+			_starling.enableErrorChecking = false;
+			_starling.start();
 		}
 	}
 }

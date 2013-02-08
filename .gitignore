@@ -3,7 +3,7 @@
 #################
 
 *.pydevproject
-.project
+#.project
 .metadata
 bin/
 tmp/
@@ -13,7 +13,7 @@ tmp/
 *~.nib
 local.properties
 .classpath
-.settings/
+#.settings/
 .loadpath
 
 # External tool builders
@@ -161,3 +161,6 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+# katopz
+junk
