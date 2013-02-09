@@ -1,15 +1,12 @@
 package feathers.examples.layoutExplorer.screens
 {
 	import feathers.controls.Button;
-	import feathers.controls.Check;
 	import feathers.controls.Header;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
 	import feathers.layout.VerticalLayout;
-	import feathers.system.DeviceCapabilities;
-
-	import starling.core.Starling;
+	
 	import starling.display.DisplayObject;
 	import starling.display.Quad;
 	import starling.events.Event;
@@ -37,74 +34,64 @@ package feathers.examples.layoutExplorer.screens
 		override protected function initialize():void
 		{
 			const layout:VerticalLayout = new VerticalLayout();
-			layout.gap = this.settings.gap;
-			layout.paddingTop = this.settings.paddingTop;
-			layout.paddingRight = this.settings.paddingRight;
-			layout.paddingBottom = this.settings.paddingBottom;
-			layout.paddingLeft = this.settings.paddingLeft;
-			layout.horizontalAlign = this.settings.horizontalAlign;
-			layout.verticalAlign = this.settings.verticalAlign;
+			layout.gap = settings.gap;
+			layout.paddingTop = settings.paddingTop;
+			layout.paddingRight = settings.paddingRight;
+			layout.paddingBottom = settings.paddingBottom;
+			layout.paddingLeft = settings.paddingLeft;
+			layout.horizontalAlign = settings.horizontalAlign;
+			layout.verticalAlign = settings.verticalAlign;
 
-			this._container = new ScrollContainer();
-			this._container.layout = layout;
+			_container = new ScrollContainer();
+			_container.layout = layout;
 			//when the scroll policy is set to on, the "elastic" edges will be
 			//active even when the max scroll position is zero
-			this._container.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_ON;
-			this._container.snapScrollPositionsToPixels = true;
-			this.addChild(this._container);
-			for (var i:int = 0; i < this.settings.itemCount; i++)
+			_container.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_ON;
+			_container.snapScrollPositionsToPixels = true;
+			addChild(_container);
+			for (var i:int = 0; i < settings.itemCount; i++)
 			{
 				var size:Number = 100;
 				var quad:Quad = new Quad(size, size, 0xff8800);
-				this._container.addChild(quad);
+				_container.addChild(quad);
 			}
 
-			this._header = new Header();
-			this._header.title = "Preview";
-			this.addChild(this._header);
+			_header = new Header();
+			_header.title = "Preview";
+			addChild(_header);
 
-			if (!DeviceCapabilities.isTablet(Starling.current.nativeStage))
-			{
-				this._backButton = new Button();
-				this._backButton.label = "Back";
-				this._backButton.addEventListener(Event.TRIGGERED, backButton_triggeredHandler);
+			var _logButton:Button = new Button();
+			_logButton.label = "Log";
+			_logButton.addEventListener(Event.TRIGGERED, logButton_triggeredHandler);
 
-				this._header.leftItems = new <DisplayObject>[this._backButton];
-			}
+			_header.leftItems = new <DisplayObject>[_logButton];
 
-			this._settingsButton = new Button();
-			this._settingsButton.label = "export";
-			this._settingsButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
+			_settingsButton = new Button();
+			_settingsButton.label = "export";
+			_settingsButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
 
-			this._header.rightItems = new <DisplayObject>[this._settingsButton];
-
-			// handles the back hardware key on android
-			this.backButtonHandler = this.onBackButton;
+			_header.rightItems = new <DisplayObject>[_settingsButton];
 		}
 
 		override protected function draw():void
 		{
-			this._header.width = this.actualWidth;
-			this._header.validate();
+			_header.width = actualWidth;
+			_header.validate();
 
-			this._container.y = this._header.height;
-			this._container.width = this.actualWidth;
-			this._container.height = this.actualHeight - this._container.y;
+			_container.y = _header.height;
+			_container.width = actualWidth;
+			_container.height = actualHeight - _container.y;
 		}
 
-		private function onBackButton():void
+		private function logButton_triggeredHandler(event:Event):void
 		{
-			this.dispatchEventWith(Event.COMPLETE);
-		}
-
-		private function backButton_triggeredHandler(event:Event):void
-		{
-			this.onBackButton();
+			//TODO
+			trace("todo show log screen");
 		}
 
 		private function settingsButton_triggeredHandler(event:Event):void
 		{
-			this.dispatchEventWith(SHOW_SETTINGS);
+			dispatchEventWith(SHOW_SETTINGS);
 		}
 	}
 }

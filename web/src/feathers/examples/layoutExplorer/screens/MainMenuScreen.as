@@ -6,6 +6,7 @@ package feathers.examples.layoutExplorer.screens
 	import feathers.controls.List;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
+	import feathers.controls.ToggleSwitch;
 	import feathers.controls.renderers.DefaultGroupedListItemRenderer;
 	import feathers.controls.renderers.DefaultListItemRenderer;
 	import feathers.controls.renderers.FlumpyListItemRenderer;
@@ -90,36 +91,38 @@ package feathers.examples.layoutExplorer.screens
 			//renderer.iconSourceField = "texture";
 			//renderer.iconPosition = Button.ICON_POSITION_TOP;
 			
-			var _check1:Check = new Check();
-			_check1.isSelected = false;
-			_check1.label = "fla";
-			_check1.x = padding + 0;
-			_check1.y = renderer.height - 19;
-			renderer.addChild(_check1);
+			// FLA status
+			var _flaCheck:Check = new Check();
+			_flaCheck.isSelected = false;
+			_flaCheck.label = "fla";
+			_flaCheck.x = padding + 0;
+			_flaCheck.y = renderer.height - 19;
+			renderer.addChild(_flaCheck);
 			
-			var _check2:Check = new Check();
-			_check2.isSelected = false;
-			_check2.label = "swf";
-			_check2.x = padding + 40;
-			_check2.y = _check1.y;
-			renderer.addChild(_check2);
+			// SWF status
+			var _swfCheck:Check = new Check();
+			_swfCheck.isSelected = false;
+			_swfCheck.label = "swf";
+			_swfCheck.x = padding + 40;
+			_swfCheck.y = _flaCheck.y;
+			renderer.addChild(_swfCheck);
 			
-			var _exportCheck:Check = new Check();
-			_exportCheck.isSelected = false;
-			_exportCheck.label = "export";
-			_exportCheck.x = actualWidth - 56;
-			_exportCheck.y = renderer.height*.5 - 8;
-			_exportCheck.isSelected = true;
-			renderer.addChild(_exportCheck);
-			
-			_exportCheck.addEventListener(Event.CHANGE, onExportCheckChangeHandler);
+			var _exportSwitch:ToggleSwitch = new ToggleSwitch();
+			_exportSwitch.onText = "export";
+			_exportSwitch.offText = "ignore";
+			_exportSwitch.isSelected = true;
+			_exportSwitch.width = 64;
+			_exportSwitch.x = actualWidth - _exportSwitch.width - padding;
+			_exportSwitch.y = renderer.height*.5 - 12;
+			_exportSwitch.addEventListener(Event.CHANGE, onExportCheckChangeHandler);
+			renderer.addChild(_exportSwitch);
 			
 			return renderer;
 		}
 		
 		private function onExportCheckChangeHandler(event:Event):void
 		{
-			trace(Check(event.target).isSelected);
+			trace(ToggleSwitch(event.target).isSelected);
 			//_list.dataProvider.addItem({ text: "m40s1_game_in_ani", event: SHOW_VERTICAL });
 		}
 		
