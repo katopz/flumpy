@@ -14,6 +14,8 @@ package feathers.examples.layoutExplorer.screens
 	import feathers.data.ListCollection;
 	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
 	import feathers.layout.AnchorLayout;
+	import feathers.layout.AnchorLayoutData;
+	import feathers.layout.HorizontalLayout;
 	import feathers.layout.VerticalLayout;
 	import feathers.skins.StandardIcons;
 	import feathers.system.DeviceCapabilities;
@@ -46,12 +48,18 @@ package feathers.examples.layoutExplorer.screens
 			_header.title = "Flumpy v1.0";
 			addChild(_header);
 			
+			var previewButton:Button = new Button;
+			previewButton.label = "preview";
+			
+			var logButton:Button = new Button;
+			logButton.label = "log";
+			
 			_list = new List();
 			_list.dataProvider = new ListCollection(
 			[
 				//{ text: "Horizontal", event: SHOW_HORIZONTAL },
-				{ text: "m40s1_game_intro_ani", event: SHOW_VERTICAL },
-				{ text: "m40s1_game_story_ani", event: SHOW_VERTICAL , missing: ["fla", "swf"]},
+				{ text: "m40s1_game_intro_ani", event: SHOW_VERTICAL , accessory: previewButton },
+				{ text: "m40s1_game_story_ani", event: SHOW_VERTICAL , missing: ["fla", "swf"], accessory: logButton},
 				{ text: "m40s1_game_outro_ani", event: SHOW_VERTICAL , missing: ["fla"]}
 				//{ text: "Tiled Rows", event: SHOW_TILED_ROWS },
 				//{ text: "Tiled Columns", event: SHOW_TILED_COLUMNS },
@@ -71,13 +79,12 @@ package feathers.examples.layoutExplorer.screens
 			
 			var _exportButton:Button = new Button();
 			_exportButton.label = "export";
-			_exportButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
+			_exportButton.addEventListener(Event.TRIGGERED, exportButton_triggeredHandler);
 			
 			_header.rightItems = new <DisplayObject>[_exportButton];
 		}
 		
-		
-		private function settingsButton_triggeredHandler(event:Event):void
+		private function exportButton_triggeredHandler(event:Event):void
 		{
 			//TODO
 			trace("todo");
@@ -93,6 +100,7 @@ package feathers.examples.layoutExplorer.screens
 			renderer.height = 40;
 			renderer.labelOffsetX = -6;//padding;
 			renderer.labelOffsetY = -9;
+			
 			//renderer.iconSourceField = "texture";
 			//renderer.iconPosition = Button.ICON_POSITION_TOP;
 			
@@ -112,15 +120,37 @@ package feathers.examples.layoutExplorer.screens
 			_swfCheck.y = _flaCheck.y;
 			renderer.addChild(_swfCheck);
 			
-			var _exportSwitch:ToggleSwitch = new ToggleSwitch();
-			_exportSwitch.onText = "include";
-			_exportSwitch.offText = "ignore";
-			_exportSwitch.isSelected = true;
-			_exportSwitch.width = 64;
-			_exportSwitch.x = actualWidth - _exportSwitch.width - padding;
-			_exportSwitch.y = renderer.height*.5 - 12;
-			_exportSwitch.addEventListener(Event.CHANGE, onExportCheckChangeHandler);
-			renderer.addChild(_exportSwitch);
+			/*
+			const rightButtonLayoutData:AnchorLayoutData = new AnchorLayoutData();
+			rightButtonLayoutData.top = 10;
+			rightButtonLayoutData.left = 10;
+			*/
+			/*
+			const containerLayout:HorizontalLayout = new HorizontalLayout();
+			//containerLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_RIGHT;
+			containerLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
+			containerLayout.gap = 20 * this.dpiScale;
+			containerLayout.padding = 8;
+			
+			var _radioContainer:ScrollContainer = new ScrollContainer();
+			//_radioContainer.layoutData = rightButtonLayoutData;
+			_radioContainer.layout = containerLayout;
+			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
+			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
+			renderer.addChild(_radioContainer);
+			
+			var logButton:Button = new Button;
+			logButton.label = "log";
+			_radioContainer.addChild(logButton);
+			
+			var previewButton:Button = new Button;
+			previewButton.label = "preview";
+			_radioContainer.addChild(previewButton);
+			
+			_radioContainer.x = actualWidth - 64;
+			*/
+			
+			// TODO : dynamic accessory
 			
 			return renderer;
 		}
