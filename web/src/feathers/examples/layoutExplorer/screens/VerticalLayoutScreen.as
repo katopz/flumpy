@@ -2,9 +2,18 @@ package feathers.examples.layoutExplorer.screens
 {
 	import feathers.controls.Button;
 	import feathers.controls.Header;
+	import feathers.controls.Label;
+	import feathers.controls.PanelScreen;
+	import feathers.controls.Radio;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
+	import feathers.controls.TabBar;
+	import feathers.core.ToggleGroup;
+	import feathers.data.ListCollection;
 	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
+	import feathers.layout.AnchorLayout;
+	import feathers.layout.AnchorLayoutData;
+	import feathers.layout.HorizontalLayout;
 	import feathers.layout.VerticalLayout;
 	
 	import starling.display.DisplayObject;
@@ -14,10 +23,12 @@ package feathers.examples.layoutExplorer.screens
 	[Event(name = "complete", type = "starling.events.Event")]
 
 	[Event(name = "showSettings", type = "starling.events.Event")]
+	[Event(name = "showLogs", type = "starling.events.Event")]
 
 	public class VerticalLayoutScreen extends Screen
 	{
 		public static const SHOW_SETTINGS:String = "showSettings";
+		public static const SHOW_LOGS:String = "showLogs";
 
 		public function VerticalLayoutScreen()
 		{
@@ -31,8 +42,14 @@ package feathers.examples.layoutExplorer.screens
 		private var _backButton:Button;
 		private var _settingsButton:Button;
 
+		// tab
+		private var _tabBar:TabBar;
+		private var _label:Label;
+		
 		override protected function initialize():void
 		{
+			y = settings.marginTop;
+				
 			const layout:VerticalLayout = new VerticalLayout();
 			layout.gap = settings.gap;
 			layout.paddingTop = settings.paddingTop;
@@ -41,7 +58,7 @@ package feathers.examples.layoutExplorer.screens
 			layout.paddingLeft = settings.paddingLeft;
 			layout.horizontalAlign = settings.horizontalAlign;
 			layout.verticalAlign = settings.verticalAlign;
-
+			
 			_container = new ScrollContainer();
 			_container.layout = layout;
 			//when the scroll policy is set to on, the "elastic" edges will be
@@ -57,22 +74,43 @@ package feathers.examples.layoutExplorer.screens
 			}
 
 			_header = new Header();
-			_header.title = "Preview";
 			addChild(_header);
 
-			var _logButton:Button = new Button();
-			_logButton.label = "Log";
-			_logButton.addEventListener(Event.TRIGGERED, logButton_triggeredHandler);
-
-			_header.leftItems = new <DisplayObject>[_logButton];
-
-			_settingsButton = new Button();
-			_settingsButton.label = "export";
-			_settingsButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
-
-			_header.rightItems = new <DisplayObject>[_settingsButton];
+			const containerLayout:HorizontalLayout = new HorizontalLayout();
+			containerLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
+			containerLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
+			containerLayout.gap = 20 * this.dpiScale;
+			containerLayout.padding = 8;
+			
+			var _radioGroup:ToggleGroup = new ToggleGroup();
+			_radioGroup.addEventListener(Event.CHANGE, radioGroup_changeHandler);
+			
+			var _radioContainer:ScrollContainer = new ScrollContainer();
+			_radioContainer.layout = containerLayout;
+			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
+			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
+			addChild(_radioContainer);
+			
+			var _radio1:Radio = new Radio();
+			_radio1.label = "Plain";
+			_radioGroup.addItem(_radio1);
+			_radioContainer.addChild(_radio1);
+			
+			var _radio2:Radio = new Radio();
+			_radio2.label = "Tree";
+			_radioGroup.addItem(_radio2);
+			_radioContainer.addChild(_radio2);
+			
+			_header.addChild(_radioContainer);
 		}
 
+		private function radioGroup_changeHandler(event:Event):void
+		{
+			//_label.text = "selectedIndex: " + _tabBar.selectedIndex.toString();
+			//invalidate();
+			trace("todo");
+		}
+		
 		override protected function draw():void
 		{
 			_header.width = actualWidth;
@@ -81,12 +119,12 @@ package feathers.examples.layoutExplorer.screens
 			_container.y = _header.height;
 			_container.width = actualWidth;
 			_container.height = actualHeight - _container.y;
+			
 		}
 
 		private function logButton_triggeredHandler(event:Event):void
 		{
-			//TODO
-			trace("todo show log screen");
+			dispatchEventWith(SHOW_LOGS);
 		}
 
 		private function settingsButton_triggeredHandler(event:Event):void

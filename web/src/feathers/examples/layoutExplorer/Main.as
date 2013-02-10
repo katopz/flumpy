@@ -4,7 +4,9 @@ package feathers.examples.layoutExplorer
 	import feathers.controls.ScreenNavigatorItem;
 	import feathers.controls.ScrollContainer;
 	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
+	import feathers.examples.layoutExplorer.screens.LogsScreen;
 	import feathers.examples.layoutExplorer.screens.MainMenuScreen;
+	import feathers.examples.layoutExplorer.screens.TabBarScreen;
 	import feathers.examples.layoutExplorer.screens.VerticalLayoutScreen;
 	import feathers.examples.layoutExplorer.screens.VerticalLayoutSettingsScreen;
 	import feathers.layout.AnchorLayout;
@@ -23,10 +25,13 @@ package feathers.examples.layoutExplorer
 		private static const MAIN_MENU:String = "mainMenu";
 		private static const VERTICAL:String = "vertical";
 		private var VERTICAL_SETTINGS:String = "vertical-setting";
+		//private var LOGS_SCREEN:String = "logs-screen";
+		private static const TAB_BAR:String = "tabBar";
 		
 		private static const MAIN_MENU_EVENTS:Object =
 		{
-			showVertical: VERTICAL
+			showVertical: VERTICAL,
+			showTabBar: TAB_BAR
 		}
 
 		public function Main()
@@ -42,8 +47,6 @@ package feathers.examples.layoutExplorer
 		private var _menu:MainMenuScreen;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 
-		
-
 		private function layoutForTablet():void
 		{
 			this._container.width = this.stage.stageWidth;
@@ -56,12 +59,22 @@ package feathers.examples.layoutExplorer
 
 			this._navigator = new ScreenNavigator();
 
+			const verticalLayoutSettings2:VerticalLayoutSettings = new VerticalLayoutSettings();
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
+			/*
+			this._navigator.addScreen(LOGS_SCREEN, new ScreenNavigatorItem(LogsScreen,
+				{
+					complete: VERTICAL
+				},
+				{
+					settings: verticalLayoutSettings2
+				}));
 			
 			this._navigator.addScreen(VERTICAL, new ScreenNavigatorItem(VerticalLayoutScreen,
 			{
 				complete: MAIN_MENU,
-				showSettings: VERTICAL_SETTINGS
+				showSettings: VERTICAL_SETTINGS,
+				showLogs: LOGS_SCREEN
 			},
 			{
 				settings: verticalLayoutSettings
@@ -73,23 +86,12 @@ package feathers.examples.layoutExplorer
 			{
 				settings: verticalLayoutSettings
 			}));
-/*
-			const tiledRowsLayoutSettings:TiledRowsLayoutSettings = new TiledRowsLayoutSettings();
-			this._navigator.addScreen(TILED_ROWS, new ScreenNavigatorItem(TiledRowsLayoutScreen,
-			{
-				complete: MAIN_MENU,
-				showSettings: TILED_ROWS_SETTINGS
-			},
-			{
-				settings: tiledRowsLayoutSettings
-			}));
-			this._navigator.addScreen(TILED_ROWS_SETTINGS, new ScreenNavigatorItem(TiledRowsLayoutSettingsScreen,
-			{
-				complete: TILED_ROWS
-			},
-			{
-				settings: tiledRowsLayoutSettings
-			}));*/
+			*/
+			
+			this._navigator.addScreen(TAB_BAR, new ScreenNavigatorItem(TabBarScreen,
+				{
+					complete: MAIN_MENU
+				}));
 
 			this._transitionManager = new ScreenSlidingStackTransitionManager(this._navigator);
 			this._transitionManager.duration = 0.4;
@@ -109,7 +111,7 @@ package feathers.examples.layoutExplorer
 				{
 					this._menu.addEventListener(eventType, mainMenuEventHandler);
 				}
-				this._menu.width = 640 * DeviceCapabilities.dpi / this._theme.originalDPI;
+				this._menu.width = 960 * DeviceCapabilities.dpi / this._theme.originalDPI;
 				const menuLayoutData:AnchorLayoutData = new AnchorLayoutData();
 				menuLayoutData.top = 0;
 				menuLayoutData.bottom = 0;
@@ -137,6 +139,8 @@ package feathers.examples.layoutExplorer
 
 				this._navigator.showScreen(MAIN_MENU);
 			}
+			
+			this._navigator.showScreen(TAB_BAR);
 		}
 
 		private function removedFromStageHandler(event:Event):void

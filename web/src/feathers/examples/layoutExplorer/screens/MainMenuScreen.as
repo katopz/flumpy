@@ -24,20 +24,11 @@ package feathers.examples.layoutExplorer.screens
 	import starling.events.Event;
 	import starling.textures.Texture;
 
-	[Event(name="showHorizontal",type="starling.events.Event")]
-
 	[Event(name="showVertical",type="starling.events.Event")]
-
-	[Event(name="showTiledRows",type="starling.events.Event")]
-
-	[Event(name="showTiledColumns",type="starling.events.Event")]
 
 	public class MainMenuScreen extends Screen
 	{
-		public static const SHOW_HORIZONTAL:String = "showHorizontal";
 		public static const SHOW_VERTICAL:String = "showVertical";
-		public static const SHOW_TILED_ROWS:String = "showTiledRows";
-		public static const SHOW_TILED_COLUMNS:String = "showTiledColumns";
 
 		public function MainMenuScreen()
 		{
@@ -60,8 +51,8 @@ package feathers.examples.layoutExplorer.screens
 			[
 				//{ text: "Horizontal", event: SHOW_HORIZONTAL },
 				{ text: "m40s1_game_intro_ani", event: SHOW_VERTICAL },
-				{ text: "m40s1_game_story_ani", event: SHOW_VERTICAL },
-				{ text: "m40s1_game_outro_ani", event: SHOW_VERTICAL }
+				{ text: "m40s1_game_story_ani", event: SHOW_VERTICAL , missing: ["fla", "swf"]},
+				{ text: "m40s1_game_outro_ani", event: SHOW_VERTICAL , missing: ["fla"]}
 				//{ text: "Tiled Rows", event: SHOW_TILED_ROWS },
 				//{ text: "Tiled Columns", event: SHOW_TILED_COLUMNS },
 			]);
@@ -77,11 +68,25 @@ package feathers.examples.layoutExplorer.screens
 				_list.selectedIndex = 0;
 			}
 			addChild(_list);
+			
+			var _exportButton:Button = new Button();
+			_exportButton.label = "export";
+			_exportButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
+			
+			_header.rightItems = new <DisplayObject>[_exportButton];
+		}
+		
+		
+		private function settingsButton_triggeredHandler(event:Event):void
+		{
+			//TODO
+			trace("todo");
+			//dispatchEventWith(EXPORT);
 		}
 		
 		private var padding:int = 8;
 		
-		protected function tileListItemRendererFactory():IListItemRenderer
+		protected function tileListItemRendererFactory(item:Object, index:int):IListItemRenderer
 		{
 			const renderer:DefaultListItemRenderer = new DefaultListItemRenderer();
 			renderer.labelField = "label";
@@ -93,7 +98,7 @@ package feathers.examples.layoutExplorer.screens
 			
 			// FLA status
 			var _flaCheck:Check = new Check();
-			_flaCheck.isSelected = false;
+			_flaCheck.isSelected = (item.missing && item.missing.indexOf("fla")!=-1);
 			_flaCheck.label = "fla";
 			_flaCheck.x = padding + 0;
 			_flaCheck.y = renderer.height - 19;
@@ -101,14 +106,14 @@ package feathers.examples.layoutExplorer.screens
 			
 			// SWF status
 			var _swfCheck:Check = new Check();
-			_swfCheck.isSelected = false;
+			_swfCheck.isSelected = (item.missing && item.missing.indexOf("swf")!=-1);
 			_swfCheck.label = "swf";
 			_swfCheck.x = padding + 40;
 			_swfCheck.y = _flaCheck.y;
 			renderer.addChild(_swfCheck);
 			
 			var _exportSwitch:ToggleSwitch = new ToggleSwitch();
-			_exportSwitch.onText = "export";
+			_exportSwitch.onText = "include";
 			_exportSwitch.offText = "ignore";
 			_exportSwitch.isSelected = true;
 			_exportSwitch.width = 64;
@@ -144,6 +149,11 @@ package feathers.examples.layoutExplorer.screens
 		private function list_changeHandler(event:Event):void
 		{
 			const eventType:String = _list.selectedItem.event as String;
+			
+			// ignore for now
+			if(eventType == SHOW_VERTICAL)
+				return;
+			
 			dispatchEventWith(eventType);
 		}
 	}
