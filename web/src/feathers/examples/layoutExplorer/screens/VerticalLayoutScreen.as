@@ -12,6 +12,7 @@ package feathers.examples.layoutExplorer.screens
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
 	
+	import starling.display.DisplayObject;
 	import starling.events.Event;
 
 	[Event(name = "complete", type = "starling.events.Event")]
@@ -24,6 +25,9 @@ package feathers.examples.layoutExplorer.screens
 		{
 			// layout
 			initLayout();
+			
+			// body
+			initBody();
 
 			// header
 			initHeader();
@@ -41,7 +45,18 @@ package feathers.examples.layoutExplorer.screens
 			_container.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_container.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 		}
-
+		
+		private function initBody():void
+		{
+			var _label:Label = new Label();
+			_label.text = "selectedIndex";
+			const labelLayoutData:AnchorLayoutData = new AnchorLayoutData();
+			labelLayoutData.horizontalCenter = 0;
+			labelLayoutData.verticalCenter = 0;
+			_label.layoutData = labelLayoutData;
+			_container.addChild(DisplayObject(_label));
+		}
+		
 		// header -----------------------------------------------------------------------
 		
 		private var _header:Header;
@@ -54,7 +69,7 @@ package feathers.examples.layoutExplorer.screens
 			const radioLayout:HorizontalLayout = new HorizontalLayout();
 			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
 			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
-			radioLayout.gap = 20 * this.dpiScale;
+			radioLayout.gap = 20 * dpiScale;
 			radioLayout.padding = 8;
 
 			var _radioGroup:ToggleGroup = new ToggleGroup();
@@ -111,17 +126,21 @@ package feathers.examples.layoutExplorer.screens
 
 		override protected function draw():void
 		{
-			_header.width = actualWidth;
+			const currentWidth:int = actualWidth - 320;
+			
+			_header.width = currentWidth;
 			_header.height = 32;
 			_header.validate();
 			
-			_footer.width = actualWidth;
+			_footer.width = currentWidth;
 			_footer.height = 32;
 			_footer.validate();
 
 			_container.y = _header.height;
-			_container.width = actualWidth;
+			_container.width = currentWidth;
 			_container.height = actualHeight - _header.height - _footer.height;
+			
+			_container.validate();
 		}
 
 		private function radioGroup_changeHandler(event:Event):void
