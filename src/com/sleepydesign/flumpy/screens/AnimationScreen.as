@@ -5,6 +5,7 @@ package com.sleepydesign.flumpy.screens
 	
 	import flash.utils.ByteArray;
 	
+	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
 	import feathers.controls.Radio;
@@ -22,7 +23,7 @@ package com.sleepydesign.flumpy.screens
 	
 	import starling.display.DisplayObject;
 	import starling.events.Event;
-	
+
 	[Event(name = "complete", type = "starling.events.Event")]
 
 	public class AnimationScreen extends Screen
@@ -33,19 +34,22 @@ package com.sleepydesign.flumpy.screens
 		{
 			// layout
 			initLayout();
-			
+
 			// body
 			initBody();
-
+			
+			// footer
+			initFooter();
+			
 			// header
 			initHeader();
 
-			// footer
-			initFooter();
 		}
+
+		// layout -----------------------------------------------------------------------
 		
 		private var _container:ScrollContainer;
-		
+
 		private function initLayout():void
 		{
 			addChild(_container = new ScrollContainer());
@@ -54,11 +58,30 @@ package com.sleepydesign.flumpy.screens
 			_container.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 		}
 		
+		// body -----------------------------------------------------------------------
+
+		private var _body:ScrollContainer;
+		
 		private function initBody():void
 		{
-			[Embed(source="/../assets-dev/mascot.zip", mimeType="application/octet-stream")]
-			const MASCOT_ZIP :Class;
+			_container.addChild(_body = new ScrollContainer());
 			
+			const radioLayout:HorizontalLayout = new HorizontalLayout();
+			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
+			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
+			_body.layout = radioLayout;
+			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
+			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
+			
+			/*
+			var btn:Button=new Button;
+			btn.label = "test"
+			_body.addChild(btn);
+			*/
+			
+			[Embed(source = "/../assets-dev/mascot.zip", mimeType = "application/octet-stream")]
+			const MASCOT_ZIP:Class;
+
 			const loader:Future = LibraryLoader.loadBytes(ByteArray(new MASCOT_ZIP()));
 			loader.succeeded.add(onLibraryLoaded);
 			loader.failed.add(function(e:Error):void
@@ -66,26 +89,30 @@ package com.sleepydesign.flumpy.screens
 				throw e;
 			});
 		}
-		
-		protected var _movieCreator :MovieCreator;
-		
-		protected function onLibraryLoaded (library :Library) :void {
+
+		private var _movieCreator:MovieCreator;
+		private var _movieContainer:Movie;
+
+		protected function onLibraryLoaded(library:Library):void
+		{
 			_movieCreator = new MovieCreator(library);
-			var movie :Movie = _movieCreator.createMovie("walk");
-			movie.x = 320;
-			movie.y = 240;
-			addChild(movie);
-			
+			_movieContainer = _movieCreator.createMovie("walk");
+			//_body.addChild(_movieContainer);
+			addChild(_movieContainer);
+
 			// Clean up after ourselves when the screen goes away.
-			addEventListener(Event.REMOVED_FROM_STAGE, function (..._) :void {
+			addEventListener(Event.REMOVED_FROM_STAGE, function(... _):void
+			{
 				_movieCreator.library.dispose();
 			});
+			
+			draw();
 		}
-		
+
 		// header -----------------------------------------------------------------------
-		
+
 		private var _header:Header;
-		
+
 		private function initHeader():void
 		{
 			_header = new Header();
@@ -117,9 +144,9 @@ package com.sleepydesign.flumpy.screens
 
 			_header.addChild(_radioContainer);
 		}
-		
+
 		// footer -----------------------------------------------------------------------
-		
+
 		private var _footer:Header;
 
 		private function initFooter():void
@@ -132,31 +159,31 @@ package com.sleepydesign.flumpy.screens
 			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
 			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
 			radioLayout.padding = 8;
-			
+
 			var _radioContainer:ScrollContainer = new ScrollContainer();
 			_radioContainer.layout = radioLayout;
 			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			
+
 			var _radio1:Label = new Label();
 			_radio1.text = "Memory used : 100KB";
 			_radioContainer.addChild(_radio1);
-			
+
 			var _radio2:Label = new Label();
 			_radio2.text = "Atlas Wasted : 66.67%";
 			_radioContainer.addChild(_radio2);
-			
+
 			_footer.addChild(_radioContainer);
 		}
 
 		override protected function draw():void
 		{
 			const currentWidth:int = actualWidth - 320;
-			
+
 			_header.width = currentWidth;
 			_header.height = 32;
 			_header.validate();
-			
+
 			_footer.width = currentWidth;
 			_footer.height = 32;
 			_footer.validate();
@@ -164,8 +191,19 @@ package com.sleepydesign.flumpy.screens
 			_container.y = _header.height;
 			_container.width = currentWidth;
 			_container.height = actualHeight - _header.height - _footer.height;
-			
+
 			_container.validate();
+			
+			_body.width = currentWidth;
+			_body.height = _container.height;
+			_body.validate();
+			
+			// TODO : responsive to movie container size, test with bella
+			if(_movieContainer)
+			{
+				_movieContainer.x = currentWidth*.5;
+				_movieContainer.y = 32*3 + _container.height*.5;
+			}
 		}
 
 		private function radioGroup_changeHandler(event:Event):void
