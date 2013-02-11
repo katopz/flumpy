@@ -83,7 +83,7 @@ package com.sleepydesign.flumpy.themes
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 
-	public class MetalWorksMobileTheme extends DisplayListWatcher
+	public class GrayScaleTheme extends DisplayListWatcher
 	{
 		[Embed(source="/../assets-dev/images/metalworks.png")]
 		protected static const ATLAS_IMAGE:Class;
@@ -130,7 +130,7 @@ package com.sleepydesign.flumpy.themes
 			return quad;
 		}
 
-		public function MetalWorksMobileTheme(container:DisplayObjectContainer = null, scaleToDPI:Boolean = true)
+		public function GrayScaleTheme(container:DisplayObjectContainer = null, scaleToDPI:Boolean = true)
 		{
 			if(!container)
 			{

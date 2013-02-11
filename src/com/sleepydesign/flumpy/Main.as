@@ -2,7 +2,7 @@ package com.sleepydesign.flumpy
 {
 	import com.sleepydesign.flumpy.screens.MainMenuScreen;
 	import com.sleepydesign.flumpy.screens.PreviewScreen;
-	import com.sleepydesign.flumpy.themes.MetalWorksMobileTheme;
+	import com.sleepydesign.flumpy.themes.GrayScaleTheme;
 	
 	import feathers.controls.ScreenNavigator;
 	import feathers.controls.ScreenNavigatorItem;
@@ -34,7 +34,7 @@ package com.sleepydesign.flumpy
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 		}
 
-		private var _theme:MetalWorksMobileTheme;
+		private var _theme:GrayScaleTheme;
 		private var _container:ScrollContainer;
 		private var _navigator:ScreenNavigator;
 		private var _menu:MainMenuScreen;
@@ -48,7 +48,7 @@ package com.sleepydesign.flumpy
 
 		private function addedToStageHandler(event:Event):void
 		{
-			_theme = new MetalWorksMobileTheme();
+			_theme = new GrayScaleTheme();
 
 			_navigator = new ScreenNavigator();
 

@@ -1,19 +1,28 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.core.MovieCreator;
+	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
+	
+	import flash.utils.ByteArray;
+	
 	import feathers.controls.Header;
 	import feathers.controls.Label;
 	import feathers.controls.Radio;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.core.ToggleGroup;
-	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
 	
+	import flump.display.Library;
+	import flump.display.LibraryLoader;
+	import flump.display.Movie;
+	import flump.executor.Future;
+	
 	import starling.display.DisplayObject;
 	import starling.events.Event;
-
+	
 	[Event(name = "complete", type = "starling.events.Event")]
 
 	public class AnimationScreen extends Screen
@@ -47,13 +56,30 @@ package com.sleepydesign.flumpy.screens
 		
 		private function initBody():void
 		{
-			var _label:Label = new Label();
-			_label.text = "selectedIndex";
-			const labelLayoutData:AnchorLayoutData = new AnchorLayoutData();
-			labelLayoutData.horizontalCenter = 0;
-			labelLayoutData.verticalCenter = 0;
-			_label.layoutData = labelLayoutData;
-			_container.addChild(DisplayObject(_label));
+			[Embed(source="/../assets-dev/mascot.zip", mimeType="application/octet-stream")]
+			const MASCOT_ZIP :Class;
+			
+			const loader:Future = LibraryLoader.loadBytes(ByteArray(new MASCOT_ZIP()));
+			loader.succeeded.add(onLibraryLoaded);
+			loader.failed.add(function(e:Error):void
+			{
+				throw e;
+			});
+		}
+		
+		protected var _movieCreator :MovieCreator;
+		
+		protected function onLibraryLoaded (library :Library) :void {
+			_movieCreator = new MovieCreator(library);
+			var movie :Movie = _movieCreator.createMovie("walk");
+			movie.x = 320;
+			movie.y = 240;
+			addChild(movie);
+			
+			// Clean up after ourselves when the screen goes away.
+			addEventListener(Event.REMOVED_FROM_STAGE, function (..._) :void {
+				_movieCreator.library.dispose();
+			});
 		}
 		
 		// header -----------------------------------------------------------------------

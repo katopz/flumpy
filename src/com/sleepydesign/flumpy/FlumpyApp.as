@@ -11,11 +11,11 @@ package com.sleepydesign.flumpy
 	import starling.core.Starling;
 
 	[SWF(backgroundColor = "#FFFFFF", frameRate = "60", width = "960", height = "640", embedAsCFF = "false")]
-	public class FlumpyCore extends Sprite
+	public class FlumpyApp extends Sprite
 	{
 		private var _starling:Starling;
 		
-		public function FlumpyCore()
+		public function FlumpyApp()
 		{
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
