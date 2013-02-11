@@ -36,44 +36,12 @@ package feathers.examples.layoutExplorer.screens
 		{
 			this.layout = new AnchorLayout();
 			
-			this.headerProperties.title = "Detail";
+			this.headerProperties.title = "Preview";
 
-			/*
-			_label = new Label();
-			_label.text = "selectedIndex: " + _tabBar.selectedIndex.toString();
-			const labelLayoutData:AnchorLayoutData = new AnchorLayoutData();
-			labelLayoutData.horizontalCenter = 0;
-			labelLayoutData.verticalCenter = 0;
-			_label.layoutData = labelLayoutData;
-			addChild(DisplayObject(_label));
-			*/
-
-			//headerProperties.title = "Logs";
-
-			/*
-			var _exportButton:Button = new Button();
-			_exportButton.label = "export";
-			_exportButton.addEventListener(Event.TRIGGERED, settingsButton_triggeredHandler);
-			
-			headerProperties.rightItems = new <DisplayObject>[_exportButton];
-			
-			// handles the back hardware key on android
-			backButtonHandler = onBackButton;
-			*/
-			
-			//--------------------------------------------------------------------
-			
-			/*
-			_container = new ScrollContainer();
-			_container.layout = new AnchorLayout();
-			_container.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			_container.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			addChild(_container);
-			*/
-			
 			_navigator = new ScreenNavigator();
 			
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
+			const verticalLayoutSettings2:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
 			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(VerticalLayoutScreen,
 				{
@@ -83,25 +51,33 @@ package feathers.examples.layoutExplorer.screens
 					settings: verticalLayoutSettings
 				}));
 			
+			_navigator.addScreen(VERTICAL_SETTINGS, new ScreenNavigatorItem(VerticalLayoutSettingsScreen,
+				{
+					//complete: VERTICAL
+				},
+				{
+					settings: verticalLayoutSettings2
+				}));
+			
 			_transitionManager = new ScreenSlidingStackTransitionManager(_navigator);
 			_transitionManager.duration = 0.4;
 			
 			addChild(_navigator);
-			_navigator.showScreen(VERTICAL);
+			//_navigator.showScreen(VERTICAL);
 			
 			_tabBar = new TabBar();
 			_tabBar.dataProvider = new ListCollection(
 				[
-					{ label: "Preview" },
-					{ label: "Logs" },
-					{ label: "Option" },
+					{ label: "Animation" },
+					{ label: "Atlas" }
 				]);
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
 			this._tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
 		}
 		
-		private static const VERTICAL:String = "vertical";
+		private static const VERTICAL:String = "Animation";
+		private static const VERTICAL_SETTINGS:String = "Atlas";
 		
 		private var _navigator:ScreenNavigator;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
@@ -111,7 +87,10 @@ package feathers.examples.layoutExplorer.screens
 			//_label.text = "selectedIndex: " + _tabBar.selectedIndex.toString();
 			//headerProperties.title = TabBar(event.target).selectedItem.label;
 			//invalidate();
-			trace("todo");
+			const screenName:String = TabBar(event.target).selectedItem.label;
+			this._transitionManager.clearStack();
+			this._transitionManager.skipNextTransition = true;
+			this._navigator.showScreen(screenName);
 		}
 	}
 }
