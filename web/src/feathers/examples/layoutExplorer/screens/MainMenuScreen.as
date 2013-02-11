@@ -7,22 +7,14 @@ package feathers.examples.layoutExplorer.screens
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.controls.ToggleSwitch;
-	import feathers.controls.renderers.DefaultGroupedListItemRenderer;
 	import feathers.controls.renderers.DefaultListItemRenderer;
-	import feathers.controls.renderers.FlumpyListItemRenderer;
 	import feathers.controls.renderers.IListItemRenderer;
 	import feathers.data.ListCollection;
-	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
-	import feathers.layout.AnchorLayout;
-	import feathers.layout.AnchorLayoutData;
-	import feathers.layout.HorizontalLayout;
-	import feathers.layout.VerticalLayout;
 	import feathers.skins.StandardIcons;
 	import feathers.system.DeviceCapabilities;
 	
 	import starling.core.Starling;
 	import starling.display.DisplayObject;
-	import starling.display.Quad;
 	import starling.events.Event;
 	import starling.textures.Texture;
 

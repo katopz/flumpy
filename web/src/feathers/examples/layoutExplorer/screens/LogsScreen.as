@@ -3,20 +3,15 @@ package feathers.examples.layoutExplorer.screens
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
-	import feathers.controls.PanelScreen;
 	import feathers.controls.Radio;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.controls.TabBar;
 	import feathers.core.ToggleGroup;
-	import feathers.data.ListCollection;
 	import feathers.examples.layoutExplorer.data.VerticalLayoutSettings;
-	import feathers.layout.AnchorLayout;
-	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
 	import feathers.layout.VerticalLayout;
 	
-	import starling.display.DisplayObject;
 	import starling.display.Quad;
 	import starling.events.Event;
 

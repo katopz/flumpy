@@ -4,10 +4,6 @@ package feathers.examples.layoutExplorer.data
 
 	public class VerticalLayoutSettings
 	{
-		public function VerticalLayoutSettings()
-		{
-		}
-
 		public var itemCount:int = 50;
 		public var horizontalAlign:String = VerticalLayout.HORIZONTAL_ALIGN_LEFT;
 		public var verticalAlign:String = VerticalLayout.VERTICAL_ALIGN_TOP;

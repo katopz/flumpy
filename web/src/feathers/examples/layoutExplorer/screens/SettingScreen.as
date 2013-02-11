@@ -15,12 +15,8 @@ package feathers.examples.layoutExplorer.screens
 
 	[Event(name="complete",type="starling.events.Event")]
 
-	public class VerticalLayoutSettingsScreen extends Screen
+	public class SettingScreen extends Screen
 	{
-		public function VerticalLayoutSettingsScreen()
-		{
-		}
-
 		public var settings:VerticalLayoutSettings;
 
 		private var _header:Header;

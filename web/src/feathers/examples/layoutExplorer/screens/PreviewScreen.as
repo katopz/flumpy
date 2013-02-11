@@ -1,13 +1,10 @@
 package feathers.examples.layoutExplorer.screens
 {
 	import feathers.controls.Button;
-	import feathers.controls.Header;
 	import feathers.controls.Label;
 	import feathers.controls.PanelScreen;
-	import feathers.controls.Screen;
 	import feathers.controls.ScreenNavigator;
 	import feathers.controls.ScreenNavigatorItem;
-	import feathers.controls.ScrollContainer;
 	import feathers.controls.TabBar;
 	import feathers.data.ListCollection;
 	import feathers.events.FeathersEventType;
@@ -16,14 +13,13 @@ package feathers.examples.layoutExplorer.screens
 	import feathers.layout.AnchorLayoutData;
 	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
 	
-	import starling.display.DisplayObject;
 	import starling.events.Event;
 
 	[Event(name="complete",type="starling.events.Event")]
 
-	public class TabBarScreen extends PanelScreen
+	public class PreviewScreen extends PanelScreen
 	{
-		public function TabBarScreen()
+		public function PreviewScreen()
 		{
 			addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
@@ -43,7 +39,7 @@ package feathers.examples.layoutExplorer.screens
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
 			const verticalLayoutSettings2:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
-			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(VerticalLayoutScreen,
+			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(AnimationScreen,
 				{
 					//complete: VERTICAL
 				},
@@ -51,7 +47,7 @@ package feathers.examples.layoutExplorer.screens
 					settings: verticalLayoutSettings
 				}));
 			
-			_navigator.addScreen(VERTICAL_SETTINGS, new ScreenNavigatorItem(VerticalLayoutSettingsScreen,
+			_navigator.addScreen(VERTICAL_SETTINGS, new ScreenNavigatorItem(SettingScreen,
 				{
 					//complete: VERTICAL
 				},

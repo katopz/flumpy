@@ -2,7 +2,6 @@ package feathers.examples.layoutExplorer.screens
 {
 	import feathers.controls.Header;
 	import feathers.controls.Label;
-	import feathers.controls.PageIndicator;
 	import feathers.controls.Radio;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
@@ -17,7 +16,7 @@ package feathers.examples.layoutExplorer.screens
 
 	[Event(name = "complete", type = "starling.events.Event")]
 
-	public class VerticalLayoutScreen extends Screen
+	public class AnimationScreen extends Screen
 	{
 		public var settings:VerticalLayoutSettings;
 
