@@ -19,6 +19,7 @@ package com.sleepydesign.flumpy.screens
 	import flump.display.Library;
 	import flump.display.Movie;
 	
+	import starling.display.Sprite;
 	import starling.events.Event;
 
 	[Event(name = "complete", type = "starling.events.Event")]
@@ -86,10 +87,12 @@ package com.sleepydesign.flumpy.screens
 				throw e;
 			});
 			*/
+			_movieContainer = new Sprite;
+			addChild(_movieContainer);
 		}
 
 		private var _movieCreator:MovieCreator;
-		private var _movieContainer:Movie;
+		private var _movieContainer:starling.display.Sprite;
 
 		protected function onLibraryLoaded(library:Library):void
 		{
@@ -199,8 +202,8 @@ package com.sleepydesign.flumpy.screens
 			// TODO : responsive to movie container size, test with bella
 			if(_movieContainer)
 			{
-				_movieContainer.x = 320;//currentWidth*.5;
-				_movieContainer.y = 240;//32*3 + _container.height*.5;
+				_movieContainer.x = currentWidth*.5;
+				_movieContainer.y = 32*3 + _container.height*.5;
 			}
 		}
 		
@@ -208,7 +211,7 @@ package com.sleepydesign.flumpy.screens
 		{
 			AnimationHelper.init(ExportHelper.getLibraryAt(0));
 			
-			AnimationHelper.initContainer(this);
+			AnimationHelper.initContainer(_movieContainer);
 			AnimationHelper.displayLibraryItem("walk");
 		}
 

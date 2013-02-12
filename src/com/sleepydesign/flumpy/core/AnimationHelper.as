@@ -1,14 +1,18 @@
 package com.sleepydesign.flumpy.core
 {
 	import flash.geom.Rectangle;
-
+	
+	import spark.formatters.NumberFormatter;
+	
 	import flump.display.Movie;
+	import flump.export.Atlas;
 	import flump.export.DisplayCreator;
 	import flump.export.ProjectConf;
+	import flump.export.TexturePacker;
 	import flump.mold.MovieMold;
 	import flump.xfl.XflLibrary;
 	import flump.xfl.XflTexture;
-
+	
 	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.display.Sprite;
@@ -62,6 +66,15 @@ package com.sleepydesign.flumpy.core
 			
 			trace("totalUsage: " + totalUsage);
 			trace("first id : " + previewMovies[0].id);
+			
+			var atlasSize :Number = 0;
+			var atlasUsed :Number = 0;
+			for each (var atlas :Atlas in TexturePacker.withLib(_lib).createAtlases()) {
+				atlasSize += atlas.area;
+				atlasUsed += atlas.used;
+			}
+			
+			trace("atlasSize: " + ((1.0 - (atlasUsed/atlasSize)) * 100) + "%");
 		}
 
 		public static function initContainer(container:starling.display.Sprite):void
@@ -79,16 +92,15 @@ package com.sleepydesign.flumpy.core
 			_previewBounds = _previewSprite.bounds;
 			_container.addChild(_previewSprite);
 			//_container.addChild(_originIcon);
-			if (_previewSprite is Movie)
-			{
-				Starling.juggler.add(Movie(_previewSprite));
-			}
 			*/
 
+			// add movie to container
 			_previewSprite = _creator.createDisplayObject(name);
 			_container.addChild(_previewSprite);
-			_container.x = 320;
-			_container.y = 240;
+			
+			// animate it
+			if (_previewSprite is Movie)
+				Starling.juggler.add(Movie(_previewSprite));
 		}
 	}
 }
