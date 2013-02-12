@@ -147,22 +147,23 @@ public class PreviewController
         //_atlasPreviewWindow.maxHeight = height;
     }
 
-    protected function showInternal () :void {
-		/*
+    protected function showInternal() :void {
         // we dispose this at the end of the function
         var oldCreator :DisplayCreator = _creator;
 
         _creator = new DisplayCreator(_lib);
 
+		/*
         const intFormatter :NumberFormatter = new NumberFormatter();
         const formatMemory :Function = function (item :Object, ..._) :String {
             return intFormatter.format(item.memory/1024) + "k";
         };
         intFormatter.fractionalDigits = 0;
-
+		*/
+		
         // Use a labelFunction so column sorting works as expected
-        _controlsWindow.movieMemory.labelFunction = formatMemory;
-        _controlsWindow.textureMemory.labelFunction = formatMemory;
+        //_controlsWindow.movieMemory.labelFunction = formatMemory;
+        //_controlsWindow.textureMemory.labelFunction = formatMemory;
 
         // All explicitly exported movies
         const previewMovies :Vector.<MovieMold> =
@@ -186,7 +187,7 @@ public class PreviewController
             totalUsage += itemUsage;
             _controlsWindow.textures.dataProvider.addItem({texture: tex.symbol, memory: itemUsage});
         }
-        _controlsWindow.totalValue.text = formatMemory({memory: totalUsage});
+        //_controlsWindow.totalValue.text = formatMemory({memory: totalUsage});
 
         var atlasSize :Number = 0;
         var atlasUsed :Number = 0;
@@ -194,9 +195,9 @@ public class PreviewController
             atlasSize += atlas.area;
             atlasUsed += atlas.used;
         }
-        const percentFormatter :NumberFormatter = new NumberFormatter();
-        percentFormatter.fractionalDigits = 2;
-        _controlsWindow.atlasWasteValue.text = percentFormatter.format((1.0 - (atlasUsed/atlasSize)) * 100) + "%";
+        //const percentFormatter :NumberFormatter = new NumberFormatter();
+        //percentFormatter.fractionalDigits = 2;
+        //_controlsWindow.atlasWasteValue.text = percentFormatter.format((1.0 - (atlasUsed/atlasSize)) * 100) + "%";
 
         if (previewMovies.length > 0) {
             // Play the first movie
@@ -214,7 +215,6 @@ public class PreviewController
         if (oldCreator != null) {
             oldCreator.dispose();
         }
-		*/
     }
 
     protected function displayLibraryItem (name :String) :void {

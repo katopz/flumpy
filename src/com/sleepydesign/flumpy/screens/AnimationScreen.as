@@ -1,9 +1,9 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.core.AnimationHelper;
+	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.core.MovieCreator;
 	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
-	
-	import flash.utils.ByteArray;
 	
 	import feathers.controls.Button;
 	import feathers.controls.Header;
@@ -17,11 +17,8 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.HorizontalLayout;
 	
 	import flump.display.Library;
-	import flump.display.LibraryLoader;
 	import flump.display.Movie;
-	import flump.executor.Future;
 	
-	import starling.display.DisplayObject;
 	import starling.events.Event;
 
 	[Event(name = "complete", type = "starling.events.Event")]
@@ -43,7 +40,6 @@ package com.sleepydesign.flumpy.screens
 			
 			// header
 			initHeader();
-
 		}
 
 		// layout -----------------------------------------------------------------------
@@ -73,12 +69,13 @@ package com.sleepydesign.flumpy.screens
 			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			
-			/*
+			
 			var btn:Button=new Button;
 			btn.label = "test"
 			_body.addChild(btn);
-			*/
+			btn.addEventListener(Event.TRIGGERED, testButton_triggeredHandler);
 			
+			/*
 			[Embed(source = "/../assets-dev/mascot.zip", mimeType = "application/octet-stream")]
 			const MASCOT_ZIP:Class;
 
@@ -88,6 +85,7 @@ package com.sleepydesign.flumpy.screens
 			{
 				throw e;
 			});
+			*/
 		}
 
 		private var _movieCreator:MovieCreator;
@@ -201,9 +199,17 @@ package com.sleepydesign.flumpy.screens
 			// TODO : responsive to movie container size, test with bella
 			if(_movieContainer)
 			{
-				_movieContainer.x = currentWidth*.5;
-				_movieContainer.y = 32*3 + _container.height*.5;
+				_movieContainer.x = 320;//currentWidth*.5;
+				_movieContainer.y = 240;//32*3 + _container.height*.5;
 			}
+		}
+		
+		private function testButton_triggeredHandler(event:Event):void
+		{
+			AnimationHelper.init(ExportHelper.getLibraryAt(0));
+			
+			AnimationHelper.initContainer(this);
+			AnimationHelper.displayLibraryItem("walk");
 		}
 
 		private function radioGroup_changeHandler(event:Event):void

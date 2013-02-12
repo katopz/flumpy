@@ -62,6 +62,12 @@ package com.sleepydesign.flumpy.core
 
 			return _this;
 		}
+		
+		// TODO select from item
+		public static function getLibraryAt(index:int):XflLibrary
+		{
+			return _flashDocsGrid_dataProvider[index].lib;
+		}
 
 		// old stuff --------------------------------------------------------------
 

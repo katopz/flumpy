@@ -49,6 +49,7 @@ package com.sleepydesign.flumpy.screens
 			logButton.label = "log";
 			
 			_list = new List();
+			/*
 			_list.dataProvider = new ListCollection(
 			[
 				//{ text: "Horizontal", event: SHOW_HORIZONTAL },
@@ -58,6 +59,7 @@ package com.sleepydesign.flumpy.screens
 				//{ text: "Tiled Rows", event: SHOW_TILED_ROWS },
 				//{ text: "Tiled Columns", event: SHOW_TILED_COLUMNS },
 			]);
+			*/
 			_list.itemRendererFactory = tileListItemRendererFactory;
 			_list.itemRendererProperties.labelField = "text";
 			_list.addEventListener(Event.CHANGE, list_changeHandler);
@@ -67,7 +69,7 @@ package com.sleepydesign.flumpy.screens
 			}
 			else
 			{
-				_list.selectedIndex = 0;
+				//_list.selectedIndex = 0;
 			}
 			addChild(_list);
 			
