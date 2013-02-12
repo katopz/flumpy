@@ -88,17 +88,18 @@ package com.sleepydesign.flumpy.screens
 		
 		private function browseButton_triggeredHandler(event:Event):void
 		{
-			trace("todo");
 			// browse via desktop
 			flumpy.importFolder().whenDone(function(... args):void{
-				var exportHelper:ExportHelper = ExportHelper.importDirectory(args[0]);
+				ExportHelper.importDirectory(args[0]);
 			});
 		}
 		
 		private function exportButton_triggeredHandler(event:Event):void
 		{
-			trace("todo");
-			//dispatchEventWith(EXPORT);
+			// browse via desktop
+			flumpy.exportFolder().whenDone(function(... args):void{
+				ExportHelper.exportDirectory(args[0]);
+			});
 		}
 		
 		protected function tileListItemRendererFactory(item:Object, index:int):IListItemRenderer

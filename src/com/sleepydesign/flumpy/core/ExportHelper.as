@@ -3,6 +3,9 @@ package com.sleepydesign.flumpy.core
 	import com.threerings.util.Log;
 	import com.threerings.util.StringUtil;
 	
+	import flash.desktop.NativeApplication;
+	import flash.display.Stage;
+	import flash.display.StageQuality;
 	import flash.filesystem.File;
 	
 	import flump.executor.Executor;
@@ -169,6 +172,41 @@ package com.sleepydesign.flumpy.core
 		private static function createPublisher():Publisher
 		{
 			return new Publisher(_exportChooserFile, _conf);
+		}
+		
+		// export -------------------------------------------------------------------------
+		
+		public static function exportDirectory(file:File):ExportHelper
+		{
+			trace(" ^ path : " + file.nativePath);
+			
+			for each (var status:DocStatus in _flashDocsGrid_dataProvider)
+				if (status.isValid)
+					exportFlashDocument(status);
+				
+			setImportDirectory(file);
+			
+			return _this;
+		}
+		
+		private static function exportFlashDocument(status:DocStatus):void
+		{
+			const stage:Stage = NativeApplication.nativeApplication.activeWindow.stage;
+			const prevQuality:String = stage.quality;
+			
+			stage.quality = StageQuality.BEST;
+			
+			try
+			{
+				createPublisher().publish(status.lib);
+			}
+			catch (e:Error)
+			{
+				//ErrorWindowMgr.showErrorPopup("Publishing Failed", e.message, _win);
+			}
+			
+			stage.quality = prevQuality;
+			status.updateModified(Ternary.FALSE);
 		}
 	}
 }

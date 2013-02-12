@@ -7,7 +7,7 @@ package flump.export
 	import com.threerings.util.F;
 	import com.threerings.util.Log;
 	import com.threerings.util.StringUtil;
-
+	
 	import flash.desktop.NativeApplication;
 	import flash.display.NativeMenu;
 	import flash.display.NativeMenuItem;
@@ -17,9 +17,7 @@ package flump.export
 	import flash.events.MouseEvent;
 	import flash.filesystem.File;
 	import flash.utils.IDataOutput;
-
-	import feathers.core.PopUpManager;
-
+	
 	import flump.executor.Executor;
 	import flump.executor.Future;
 	import flump.xfl.ParseError;

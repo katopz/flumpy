@@ -11,5 +11,10 @@ package
 		{
 			return new WFile().browseForDirectory();
 		}
+		
+		public static function exportFolder():IWork
+		{
+			return new WFile().browseForDirectory();
+		}
 	}
 }
