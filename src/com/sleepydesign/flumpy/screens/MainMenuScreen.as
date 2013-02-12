@@ -1,5 +1,7 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.core.ExportHelper;
+	
 	import feathers.controls.Button;
 	import feathers.controls.Check;
 	import feathers.controls.Header;
@@ -69,6 +71,14 @@ package com.sleepydesign.flumpy.screens
 			}
 			addChild(_list);
 			
+			// top-left menu
+			var _importButton:Button = new Button();
+			_importButton.label = "import";
+			_importButton.addEventListener(Event.TRIGGERED, browseButton_triggeredHandler);
+			
+			_header.leftItems = new <DisplayObject>[_importButton];
+			
+			// top right menu
 			var _exportButton:Button = new Button();
 			_exportButton.label = "export";
 			_exportButton.addEventListener(Event.TRIGGERED, exportButton_triggeredHandler);
@@ -76,14 +86,20 @@ package com.sleepydesign.flumpy.screens
 			_header.rightItems = new <DisplayObject>[_exportButton];
 		}
 		
+		private function browseButton_triggeredHandler(event:Event):void
+		{
+			trace("todo");
+			// browse via desktop
+			flumpy.importFolder().whenDone(function(... args):void{
+				var exportHelper:ExportHelper = ExportHelper.importDirectory(args[0]);
+			});
+		}
+		
 		private function exportButton_triggeredHandler(event:Event):void
 		{
-			//TODO
 			trace("todo");
 			//dispatchEventWith(EXPORT);
 		}
-		
-		private var padding:int = 8;
 		
 		protected function tileListItemRendererFactory(item:Object, index:int):IListItemRenderer
 		{
@@ -95,6 +111,8 @@ package com.sleepydesign.flumpy.screens
 			
 			//renderer.iconSourceField = "texture";
 			//renderer.iconPosition = Button.ICON_POSITION_TOP;
+			
+			const padding:int = 8;
 			
 			// FLA status
 			var _flaCheck:Check = new Check();

@@ -106,11 +106,13 @@ public class FlumpApp
             }
         }
 
+		/*
         var controller :ProjectController = new ProjectController(configFile);
         controller.win.addEventListener(Event.CLOSE, F.callbackOnce(closeProject, controller));
         _projects.push(controller);
+		*/
 
-        return controller;
+        return null;
     }
 
     public function showOpenProjectDialog () :void {

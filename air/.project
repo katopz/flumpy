@@ -22,14 +22,19 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] flumpy-src</name>
+			<type>2</type>
+			<location>D:/sleepydesign/flumpy/src</location>
+		</link>
+		<link>
 			<name>[source path] libs-src</name>
 			<type>2</type>
 			<location>D:/sleepydesign/flumpy/libs-src</location>
 		</link>
 		<link>
-			<name>[source path] src</name>
+			<name>[source path] sleepydesign-core-fp11-src</name>
 			<type>2</type>
-			<location>D:/sleepydesign/flumpy/src</location>
+			<location>D:/pir2/pir2/as3/libs-fp11-src/sleepydesign-core-fp11/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -3,6 +3,10 @@
 
 package flump.export {
 
+import com.threerings.text.TextFieldUtil;
+import com.threerings.util.F;
+import com.threerings.util.MathUtil;
+
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -15,20 +19,9 @@ import flump.mold.MovieMold;
 import flump.xfl.XflLibrary;
 import flump.xfl.XflTexture;
 
-import mx.core.UIComponent;
-
-import spark.components.Group;
-import spark.events.GridSelectionEvent;
-import spark.formatters.NumberFormatter;
-
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
-
-import com.threerings.util.F;
-import com.threerings.util.MathUtil;
-
-import com.threerings.text.TextFieldUtil;
 
 public class PreviewController
 {
@@ -52,7 +45,7 @@ public class PreviewController
     }
 
     protected function createAnimWindow () :void {
-        _animPreviewWindow = new AnimPreviewWindow();
+        _animPreviewWindow = new Object();
         _animPreviewWindow.started = function (container :starling.display.Sprite) :void {
             _container = container;
             _originIcon = Util.createOriginIcon();
@@ -64,7 +57,8 @@ public class PreviewController
     }
 
     protected function createControlsWindow () :void {
-        _controlsWindow = new PreviewControlsWindow();
+		/*
+        _controlsWindow = new Object();
         _controlsWindow.open();
 
         _controlsWindow.movies.addEventListener(GridSelectionEvent.SELECTION_CHANGE,
@@ -85,9 +79,11 @@ public class PreviewController
                 _atlasPreviewWindow.activate();
             }
         });
+		*/
     }
 
     protected function createAtlasWindow () :void {
+		/*
         _atlasPreviewWindow = new AtlasPreviewWindow();
         _atlasPreviewWindow.open();
 
@@ -99,7 +95,8 @@ public class PreviewController
         }
         _atlasPreviewWindow.scale.text = "" + scale;
         _atlasPreviewWindow.setScale.addEventListener(MouseEvent.CLICK, F.callback(updateAtlas));
-        updateAtlas();
+      */
+		updateAtlas();
     }
 
     protected function updateAtlas () :void {
@@ -132,6 +129,7 @@ public class PreviewController
             sprite.addChild(atlasSprite);
         }
 
+		/*
         const uic :UIComponent = new UIComponent();
         uic.addChild(sprite);
 
@@ -143,12 +141,14 @@ public class PreviewController
         // new elements are added.
         group.width = sprite.width;
         group.height = sprite.height;
+		*/
 
         //_atlasPreviewWindow.maxWidth = width;
         //_atlasPreviewWindow.maxHeight = height;
     }
 
     protected function showInternal () :void {
+		/*
         // we dispose this at the end of the function
         var oldCreator :DisplayCreator = _creator;
 
@@ -214,6 +214,7 @@ public class PreviewController
         if (oldCreator != null) {
             oldCreator.dispose();
         }
+		*/
     }
 
     protected function displayLibraryItem (name :String) :void {
@@ -239,9 +240,9 @@ public class PreviewController
     protected var _previewBounds :Rectangle;
     protected var _container :starling.display.Sprite;
     protected var _originIcon :starling.display.Sprite;
-    protected var _controlsWindow :PreviewControlsWindow;
-    protected var _animPreviewWindow :AnimPreviewWindow;
-    protected var _atlasPreviewWindow :AtlasPreviewWindow;
+    protected var _controlsWindow :Object;
+    protected var _animPreviewWindow :Object;
+    protected var _atlasPreviewWindow :Object;
     protected var _creator :DisplayCreator;
 
     protected var _lib :XflLibrary;
