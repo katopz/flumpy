@@ -7,24 +7,31 @@ package com.debokeh.io
 	import flash.filesystem.File;
 	import flash.net.FileReference;
 
-	public class WFile extends Work implements IWork
+	public class WFile
 	{
+		private static const _work: Work = new Work;
+		
 		// native ---------------------------------------------------------------------------------------------
 		
-		private function _browseForDirectory(title:String = "Select folder.", eventHandler:Function = null):FileReference
+		private static function _browseForDirectory(title:String = "Select folder.", eventHandler:Function = null):FileReference
 		{
-			directory = File.desktopDirectory;
+			var directory:File = File.desktopDirectory;
 			
 			function _eventHandler(event:Event):void
 			{
+				// release
 				directory.removeEventListener(Event.CANCEL, _eventHandler);
 				directory.removeEventListener(Event.SELECT, _eventHandler);
 				
+				// handler
 				if (eventHandler is Function)
 					eventHandler(event);
 				
 				if (event.type == Event.SELECT)
 					_handler(event);
+				
+				// release
+				directory = null;
 			}
 			
 			// add
@@ -37,23 +44,25 @@ package com.debokeh.io
 			return directory;
 		}
 		
-		private function _handler(event:Event):void
+		private static function _handler(event:Event):void
 		{
 			var file:File = File(event.target);
 			
-			if(_whenDone is Function)
-				_whenDone(file);
+			// handler
+			if(_work.onSuccess is Function)
+				_work.onSuccess(file);
+			
+			// release
+			file = null;
 		}
 		
 		// work ---------------------------------------------------------------------------------------------
 		
-		public var directory:File;
-		
-		public function browseForDirectory(title:String = "Select folder.", eventHandler:Function = null):WFile
+		public static function browseForDirectory(title:String = "Select folder.", eventHandler:Function = null):IWork
 		{
-			_browseForDirectory(title);
+			_browseForDirectory(title, eventHandler);
 			
-			return this;
+			return _work;
 		}
 	}
 }

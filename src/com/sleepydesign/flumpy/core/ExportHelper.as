@@ -19,6 +19,8 @@ package com.sleepydesign.flumpy.core
 	import flump.export.XflLoader;
 	import flump.xfl.ParseError;
 	import flump.xfl.XflLibrary;
+	
+	import org.osflash.signals.Signal;
 
 	public class ExportHelper
 	{
@@ -68,6 +70,8 @@ package com.sleepydesign.flumpy.core
 		{
 			return _flashDocsGrid_dataProvider[index].lib;
 		}
+		
+		public static const assetImportSignal:Signal = new Signal(Array);
 
 		// old stuff --------------------------------------------------------------
 
@@ -131,6 +135,8 @@ package com.sleepydesign.flumpy.core
 					else
 						addFlashDocument(file);
 				}
+				
+				assetImportSignal.dispatch(_flashDocsGrid_dataProvider);
 			});
 		}
 
@@ -276,7 +282,6 @@ class DocStatus extends EventDispatcher
 		modifier();
 		const newValue:Object = this[fieldName];
 		trace("dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, fieldName, oldValue, newValue));");
-		//dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, fieldName, oldValue, newValue));
 	}
 
 	public function get uid():String

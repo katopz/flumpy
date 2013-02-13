@@ -70,7 +70,6 @@ package com.sleepydesign.flumpy.screens
 			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			
-			
 			var btn:Button=new Button;
 			btn.label = "test"
 			_body.addChild(btn);

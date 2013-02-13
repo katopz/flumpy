@@ -9,12 +9,12 @@ package
 	{
 		public static function importFolder():IWork
 		{
-			return new WFile().browseForDirectory();
+			return WFile.browseForDirectory();
 		}
 		
 		public static function exportFolder():IWork
 		{
-			return new WFile().browseForDirectory();
+			return WFile.browseForDirectory();
 		}
 	}
 }

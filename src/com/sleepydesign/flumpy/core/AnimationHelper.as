@@ -2,8 +2,6 @@ package com.sleepydesign.flumpy.core
 {
 	import flash.geom.Rectangle;
 	
-	import spark.formatters.NumberFormatter;
-	
 	import flump.display.Movie;
 	import flump.export.Atlas;
 	import flump.export.DisplayCreator;
@@ -74,7 +72,7 @@ package com.sleepydesign.flumpy.core
 				atlasUsed += atlas.used;
 			}
 			
-			trace("atlasSize: " + ((1.0 - (atlasUsed/atlasSize)) * 100) + "%");
+			trace("atlasSize: " + ((1.0 - (atlasUsed/atlasSize)) * 100).toPrecision(4) + "%");
 		}
 
 		public static function initContainer(container:starling.display.Sprite):void
@@ -88,7 +86,6 @@ package com.sleepydesign.flumpy.core
 			while (_container.numChildren > 0)
 				_container.removeChildAt(0);
 
-			_previewSprite = _creator.createDisplayObject(name);
 			_previewBounds = _previewSprite.bounds;
 			_container.addChild(_previewSprite);
 			//_container.addChild(_originIcon);
@@ -97,6 +94,9 @@ package com.sleepydesign.flumpy.core
 			// add movie to container
 			_previewSprite = _creator.createDisplayObject(name);
 			_container.addChild(_previewSprite);
+			
+			// bound
+			trace("_previewSprite.bounds:"+ _previewSprite.bounds);
 			
 			// animate it
 			if (_previewSprite is Movie)

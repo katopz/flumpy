@@ -16,6 +16,6 @@ package com.debokeh.works
 		 *   - fail 
 		 * 
 		 */
-		function whenDone(callback:Function):IWork;
+		function whenSuccess(callback:Function):IWork;
 	}
 }

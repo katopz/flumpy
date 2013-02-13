@@ -6,13 +6,13 @@ package com.debokeh.works
 		 * target
 		 * 
 		 * + start
-		 *   - done
+		 *   - success
 		 *   - fail 
 		 * + progress
-		 *   - done
+		 *   - success
 		 *   - fail
 		 * + complete
-		 *   - done
+		 *   - success
 		 *   - fail 
 		 * 
 		 */
@@ -22,11 +22,12 @@ package com.debokeh.works
 		
 		// callback ---------------------------------------------------------------------------------------------
 		
-		protected var _whenDone:Function;
+		public var onSuccess:Function;
 		
-		public function whenDone(callback:Function):IWork
+		public function whenSuccess(callback:Function):IWork
 		{
-			_whenDone = callback;
+			onSuccess = callback;
+			
 			return this;
 		}
 	}
