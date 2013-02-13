@@ -71,7 +71,7 @@ package com.sleepydesign.flumpy.core
 			return _flashDocsGrid_dataProvider[index].lib;
 		}
 		
-		public static const assetImportSignal:Signal = new Signal(Array);
+		public static const assetImportSignal:Signal = new Signal(/*path*/String, /*files*/ Array);
 
 		// old stuff --------------------------------------------------------------
 
@@ -141,7 +141,7 @@ package com.sleepydesign.flumpy.core
 						addFlashDocument(file);
 				}
 				
-				assetImportSignal.dispatch(_flashDocsGrid_dataProvider);
+				assetImportSignal.dispatch(base.nativePath, _flashDocsGrid_dataProvider);
 			});
 		}
 
@@ -150,6 +150,8 @@ package com.sleepydesign.flumpy.core
 			var importPathLen:int = _importDirectory.nativePath.length + 1;
 			var name:String = file.nativePath.substring(importPathLen).replace(new RegExp("\\" + File.separator, "g"), "/");
 
+			trace("addFlashDocument:"+name);
+			
 			var load:Future;
 			switch (Files.getExtension(file))
 			{
@@ -233,12 +235,16 @@ import flash.events.EventDispatcher;
 import flump.export.Ternary;
 import flump.xfl.XflLibrary;
 
+import org.osflash.signals.Signal;
+
 class DocStatus extends EventDispatcher
 {
 	public var path:String;
 	public var modified:String;
 	public var valid:String = PENDING;
 	public var lib:XflLibrary;
+	
+	public var invalidateSignal:Signal = new Signal(DocStatus);//(/*isValid*/Boolean);
 
 	public function DocStatus(path:String, modified:Ternary, valid:Ternary, lib:XflLibrary)
 	{
@@ -252,15 +258,17 @@ class DocStatus extends EventDispatcher
 
 	public function updateValid(newValid:Ternary):void
 	{
-		changeField("valid", function(... _):void
-		{
+		//changeField("valid", function(... _):void
+		//{
 			if (newValid == Ternary.TRUE)
 				valid = YES;
 			else if (newValid == Ternary.FALSE)
 				valid = ERROR;
 			else
 				valid = PENDING;
-		});
+		//});
+		
+		invalidateSignal.dispatch(this, "valid");
 	}
 
 	public function get isValid():Boolean
@@ -270,24 +278,29 @@ class DocStatus extends EventDispatcher
 
 	public function updateModified(newModified:Ternary):void
 	{
-		changeField("modified", function(... _):void
-		{
+		//changeField("modified", function(... _):void
+		//{
 			if (newModified == Ternary.TRUE)
 				modified = YES;
 			else if (newModified == Ternary.FALSE)
 				modified = " ";
 			else
 				modified = PENDING;
-		});
+		//});
+		
+		invalidateSignal.dispatch(this, "modified");
 	}
 
+	/*
 	protected function changeField(fieldName:String, modifier:Function):void
 	{
 		const oldValue:Object = this[fieldName];
 		modifier();
 		const newValue:Object = this[fieldName];
-		trace("dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, fieldName, oldValue, newValue));");
+		
+		trace("changeField:" + uid + ":" + this[fieldName]);
 	}
+	*/
 
 	public function get uid():String
 	{

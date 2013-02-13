@@ -15,6 +15,8 @@ package com.sleepydesign.flumpy.screens
 	import feathers.data.ListCollection;
 	import feathers.skins.StandardIcons;
 	
+	import org.osflash.signals.Signal;
+	
 	import starling.events.Event;
 	import starling.textures.Texture;
 
@@ -84,6 +86,8 @@ package com.sleepydesign.flumpy.screens
 			
 			_ioList.verticalScrollPolicy = GroupedList.SCROLL_POLICY_OFF;
 			
+			_ioList.isSelectable = false;
+			
 			// assets list -------------------------------------------------------------------------
 
 			addChild(_assetList = new List);
@@ -130,7 +134,7 @@ package com.sleepydesign.flumpy.screens
 			_flaCheck.x = padding + 0;
 			_flaCheck.y = renderer.height - 19;
 			renderer.addChild(_flaCheck);
-
+			
 			// SWF status
 			var _swfCheck:Check = new Check();
 			_swfCheck.isSelected = (item.missing && item.missing.indexOf("swf") != -1);
@@ -174,24 +178,59 @@ package com.sleepydesign.flumpy.screens
 			return renderer;
 		}
 
-		public function addAssets(assets:Array):void
+		public function addAssets(path:String, assets:Array):void
 		{
+			// update import path
+			_ioList.dataProvider.getItemAt(0).text = path;
+			_ioList.dataProvider.updateItemAt(0);
+			
+			// not choose output folder just yet 
+			if(String(_ioList.dataProvider.getItemAt(1).text).indexOf("Please") == 0)
+			{
+				// update export path default to import path
+				_ioList.dataProvider.getItemAt(1).text = path;
+				_ioList.dataProvider.updateItemAt(1);
+			}
+			
 			for each(var item:Object in assets)
 			{
 				trace("item.path:" + item.path);
-				addAssetItem(new AssetItemData(item.path));
+				addAssetItem(item.path, item.invalidateSignal);
 			}
 		}
 			
-		public function addAssetItem(assetItemData:AssetItemData):void
+		public function addAssetItem(filename:String, invalidateSignal:Signal):void
 		{
 			if(!_assetList.dataProvider)
 				_assetList.dataProvider = new ListCollection;
 			
+			var assetItemData:AssetItemData = new AssetItemData(_assetList.dataProvider.length, filename, invalidateSignal);
+				
 			_assetList.dataProvider.addItem(assetItemData.toObject());
+			//assetItemData.index = _assetList.dataProvider.length-1;
 			//_list.dataProvider.addItem({ text: "m40s1_game_in_ani", event: SHOW_VERTICAL });
+			
+			// watch for update
+			//assetItemData.invalidateSignal.add(onAssetItemDataUpdate);
+			assetItemData.updateSignal.add(onAssetItemDataUpdate);
+			
 		}
-
+		
+		/*
+		private function onAssetItemDataUpdate(index:int, fieldName:String, value:Object):void
+		{
+			var assetItemDataObject:Object = _assetList.dataProvider.getItemAt(index);
+			assetItemDataObject[fieldName] = value;
+			_assetList.dataProvider.updateItemAt(index);
+		}
+		*/
+		private function onAssetItemDataUpdate(index:int, assetItemDataObject:Object):void
+		{
+			var _assetItemDataObject:Object = _assetList.dataProvider.getItemAt(index);
+			_assetItemDataObject["accessory"] = assetItemDataObject["accessory"];
+			_assetList.dataProvider.updateItemAt(index);
+		}
+		
 		override protected function draw():void
 		{
 			_header.width = actualWidth;
