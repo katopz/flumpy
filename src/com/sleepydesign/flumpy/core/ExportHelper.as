@@ -104,6 +104,11 @@ package com.sleepydesign.flumpy.core
 			_docFinder = new Executor();
 			findFlashDocuments(dir, _docFinder, true);
 		}
+		
+		private static function setExportDirectory(dir:File):void
+		{
+			_exportChooserFile = dir;
+		}
 
 		private static function findFlashDocuments(base:File, exec:Executor, ignoreXflAtBase:Boolean = false):void
 		{
@@ -196,7 +201,7 @@ package com.sleepydesign.flumpy.core
 				if (status.isValid)
 					exportFlashDocument(status);
 				
-			setImportDirectory(file);
+			setExportDirectory(file);
 			
 			return _this;
 		}

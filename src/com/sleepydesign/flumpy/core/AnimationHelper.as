@@ -63,7 +63,7 @@ package com.sleepydesign.flumpy.core
 			}
 			
 			trace("totalUsage: " + totalUsage);
-			trace("first id : " + previewMovies[0].id);
+			//trace("first id : " + previewMovies[0].id);
 			
 			var atlasSize :Number = 0;
 			var atlasUsed :Number = 0;
