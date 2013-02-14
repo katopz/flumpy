@@ -733,7 +733,7 @@ package feathers.controls.supportClasses
 				var renderer:IListItemRenderer;
 				if(this._itemRendererFactory != null)
 				{
-					renderer = IListItemRenderer(this._itemRendererFactory(item, index));
+					renderer = IListItemRenderer(this._itemRendererFactory());
 				}
 				else
 				{

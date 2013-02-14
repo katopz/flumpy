@@ -72,6 +72,7 @@ package com.sleepydesign.flumpy.core
 		}
 		
 		public static const assetImportSignal:Signal = new Signal(/*path*/String, /*files*/ Array);
+		public static const importErrorSignal:Signal = new Signal(/*path*/String,/*ParseError*/ Vector.<ParseError>);
 
 		// old stuff --------------------------------------------------------------
 
@@ -79,7 +80,14 @@ package com.sleepydesign.flumpy.core
 
 		private static var _docFinder:Executor;
 		private static var _flashDocsGrid_dataProvider:Array;
-		private static var _errorsGrid_dataProvider:Array;
+		
+		public static function get logs():Vector.<ParseError>
+		{
+			return _errorsGrid_dataProvider;
+		}
+		
+		private static var _errorsGrid_dataProvider:Vector.<ParseError>;
+		
 		private static var _exportChooserFile:File;
 		private static var _importChooserFile:File;
 		private static var _conf:ProjectConf = new ProjectConf();
@@ -93,7 +101,7 @@ package com.sleepydesign.flumpy.core
 		{
 			_importDirectory = dir;
 			_flashDocsGrid_dataProvider = [];
-			_errorsGrid_dataProvider = [];
+			_errorsGrid_dataProvider = new Vector.<ParseError>;
 
 			if (dir == null)
 				return;
@@ -114,8 +122,11 @@ package com.sleepydesign.flumpy.core
 		{
 			Files.list(base, exec).succeeded.add(function(files:Array):void
 			{
+				var isError:Boolean;
+				
 				if (exec.isShutdown)
 					return;
+				
 				for each (var file:File in files)
 				{
 					if (Files.hasExtension(file, "xfl"))
@@ -123,6 +134,7 @@ package com.sleepydesign.flumpy.core
 						if (ignoreXflAtBase)
 						{
 							_errorsGrid_dataProvider.push(new ParseError(base.nativePath, ParseError.CRIT, "The import directory can't be an XFL directory, did you mean " + base.parent.nativePath + "?"));
+							isError = true;
 						}
 						else
 							addFlashDocument(file);
@@ -142,6 +154,10 @@ package com.sleepydesign.flumpy.core
 				}
 				
 				assetImportSignal.dispatch(base.nativePath, _flashDocsGrid_dataProvider);
+				
+				// some error occurs
+				if(isError)
+					importErrorSignal.dispatch(base.nativePath, _errorsGrid_dataProvider);
 			});
 		}
 
@@ -173,12 +189,23 @@ package com.sleepydesign.flumpy.core
 
 			load.succeeded.add(function(lib:XflLibrary):void
 			{
+				var isError:Boolean;
+				
 				var pub:Publisher = createPublisher();
 				status.lib = lib;
 				status.updateModified(Ternary.of(pub == null || pub.modified(lib)));
+				
 				for each (var err:ParseError in lib.getErrors())
+				{
 					_errorsGrid_dataProvider.push(err);
+					isError = true;
+				}
+				
 				status.updateValid(Ternary.of(lib.valid));
+				
+				// some error occurs
+				if(isError)
+					importErrorSignal.dispatch(status.path, _errorsGrid_dataProvider);
 			});
 			load.failed.add(function(error:Error):void
 			{

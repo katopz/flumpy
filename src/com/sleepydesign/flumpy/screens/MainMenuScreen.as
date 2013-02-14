@@ -72,7 +72,8 @@ package com.sleepydesign.flumpy.screens
 					{ text: "Please select export path." , accessory: _exportButton }
 				]);
 			
-			_ioList.itemRendererFactory = function(item:Object, index:int):IListItemRenderer
+			/*
+			_ioList.itemRendererFactory = function():IListItemRenderer
 			{
 				const renderer:DefaultListItemRenderer = new DefaultListItemRenderer();
 				renderer.labelField = "label";
@@ -80,10 +81,11 @@ package com.sleepydesign.flumpy.screens
 				
 				return renderer;
 			}
+			*/
 			
 			// wtf
 			_ioList.itemRendererProperties.labelField = "text";
-			
+		
 			_ioList.verticalScrollPolicy = GroupedList.SCROLL_POLICY_OFF;
 			
 			_ioList.isSelectable = false;
@@ -105,7 +107,7 @@ package com.sleepydesign.flumpy.screens
 			]);
 			*/
 			
-			_assetList.itemRendererFactory = tileListItemRendererFactory;
+			//_assetList.itemRendererFactory = tileListItemRendererFactory;
 			_assetList.itemRendererProperties.labelField = "text";
 			_assetList.addEventListener(Event.CHANGE, list_changeHandler);
 			
@@ -114,7 +116,7 @@ package com.sleepydesign.flumpy.screens
 			ExportHelper.assetImportSignal.add(addAssets);
 		}
 		
-		protected function tileListItemRendererFactory(item:Object, index:int):IListItemRenderer
+		protected function tileListItemRendererFactory():IListItemRenderer
 		{
 			const renderer:DefaultListItemRenderer = new DefaultListItemRenderer();
 			renderer.labelField = "label";
@@ -125,11 +127,12 @@ package com.sleepydesign.flumpy.screens
 			//renderer.iconSourceField = "texture";
 			//renderer.iconPosition = Button.ICON_POSITION_TOP;
 
+			/*
 			const padding:int = 8;
 
 			// FLA status
 			var _flaCheck:Check = new Check();
-			_flaCheck.isSelected = (item.missing && item.missing.indexOf("fla") != -1);
+			_flaCheck.isSelected = (item.missing && item.missing.indexOf("fla") == -1);// || !item.missing;
 			_flaCheck.label = "fla";
 			_flaCheck.x = padding + 0;
 			_flaCheck.y = renderer.height - 19;
@@ -137,11 +140,12 @@ package com.sleepydesign.flumpy.screens
 			
 			// SWF status
 			var _swfCheck:Check = new Check();
-			_swfCheck.isSelected = (item.missing && item.missing.indexOf("swf") != -1);
+			_swfCheck.isSelected = (item.missing && item.missing.indexOf("swf") == -1);// || !item.missing;
 			_swfCheck.label = "swf";
 			_swfCheck.x = padding + 40;
 			_swfCheck.y = _flaCheck.y;
 			renderer.addChild(_swfCheck);
+			*/
 
 			/*
 			const rightButtonLayoutData:AnchorLayoutData = new AnchorLayoutData();

@@ -1,7 +1,7 @@
 package com.sleepydesign.flumpy
 {
 	import com.sleepydesign.flumpy.screens.MainMenuScreen;
-	import com.sleepydesign.flumpy.screens.PreviewScreen;
+	import com.sleepydesign.flumpy.screens.DetailScreen;
 	import com.sleepydesign.flumpy.themes.GrayScaleTheme;
 	
 	import feathers.controls.ScreenNavigator;
@@ -52,7 +52,7 @@ package com.sleepydesign.flumpy
 
 			_navigator = new ScreenNavigator();
 
-			_navigator.addScreen(PREVIEW_SCREEN, new ScreenNavigatorItem(PreviewScreen,
+			_navigator.addScreen(PREVIEW_SCREEN, new ScreenNavigatorItem(DetailScreen,
 				{
 					complete: MAIN_MENU
 				}));

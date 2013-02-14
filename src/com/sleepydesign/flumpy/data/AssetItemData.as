@@ -50,7 +50,7 @@ package com.sleepydesign.flumpy.data
 			var result:Object = {text: filename};
 
 			var errorLabel:Label = new Label;
-			errorLabel.text = isValid?"fine":"error";
+			errorLabel.text = isValid?"fine":((valid=="init")?"[Processing]":"[Error] missing swf");
 			
 			result.accessory = errorLabel;
 

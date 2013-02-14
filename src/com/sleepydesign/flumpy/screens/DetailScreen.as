@@ -1,5 +1,7 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
+	
 	import feathers.controls.Button;
 	import feathers.controls.Label;
 	import feathers.controls.PanelScreen;
@@ -8,7 +10,6 @@ package com.sleepydesign.flumpy.screens
 	import feathers.controls.TabBar;
 	import feathers.data.ListCollection;
 	import feathers.events.FeathersEventType;
-	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
@@ -17,9 +18,9 @@ package com.sleepydesign.flumpy.screens
 
 	[Event(name="complete",type="starling.events.Event")]
 
-	public class PreviewScreen extends PanelScreen
+	public class DetailScreen extends PanelScreen
 	{
-		public function PreviewScreen()
+		public function DetailScreen()
 		{
 			addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
@@ -38,6 +39,7 @@ package com.sleepydesign.flumpy.screens
 			
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
 			const verticalLayoutSettings2:VerticalLayoutSettings = new VerticalLayoutSettings();
+			const verticalLayoutSettings3:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
 			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(AnimationScreen,
 				{
@@ -55,6 +57,14 @@ package com.sleepydesign.flumpy.screens
 					settings: verticalLayoutSettings2
 				}));
 			
+			_navigator.addScreen(LOGS, new ScreenNavigatorItem(LogsScreen,
+				{
+					//complete: VERTICAL
+				},
+				{
+					settings: verticalLayoutSettings3
+				}));
+			
 			_transitionManager = new ScreenSlidingStackTransitionManager(_navigator);
 			_transitionManager.duration = 0.4;
 			
@@ -65,7 +75,8 @@ package com.sleepydesign.flumpy.screens
 			_tabBar.dataProvider = new ListCollection(
 				[
 					{ label: "Animation" },
-					{ label: "Atlas" }
+					{ label: "Atlas" },
+					{ label: "Logs" }
 				]);
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
 			this._tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
@@ -74,6 +85,7 @@ package com.sleepydesign.flumpy.screens
 		
 		private static const VERTICAL:String = "Animation";
 		private static const VERTICAL_SETTINGS:String = "Atlas";
+		private static const LOGS:String = "Logs";
 		
 		private var _navigator:ScreenNavigator;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
