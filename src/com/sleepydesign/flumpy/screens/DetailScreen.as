@@ -31,15 +31,14 @@ package com.sleepydesign.flumpy.screens
 
 		protected function initializeHandler(event:Event):void
 		{
-			this.layout = new AnchorLayout();
+			layout = new AnchorLayout();
 			
-			this.headerProperties.title = "Preview";
+			headerProperties.title = "Preview";
 
 			_navigator = new ScreenNavigator();
 			
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
 			const verticalLayoutSettings2:VerticalLayoutSettings = new VerticalLayoutSettings();
-			const verticalLayoutSettings3:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
 			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(AnimationScreen,
 				{
@@ -60,9 +59,6 @@ package com.sleepydesign.flumpy.screens
 			_navigator.addScreen(LOGS, new ScreenNavigatorItem(LogsScreen,
 				{
 					//complete: VERTICAL
-				},
-				{
-					settings: verticalLayoutSettings3
 				}));
 			
 			_transitionManager = new ScreenSlidingStackTransitionManager(_navigator);
@@ -79,7 +75,7 @@ package com.sleepydesign.flumpy.screens
 					{ label: "Logs" }
 				]);
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
-			this._tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
+			_tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
 		}
 		
@@ -95,10 +91,11 @@ package com.sleepydesign.flumpy.screens
 			//_label.text = "selectedIndex: " + _tabBar.selectedIndex.toString();
 			//headerProperties.title = TabBar(event.target).selectedItem.label;
 			//invalidate();
-			const screenName:String = TabBar(event.target).selectedItem.label;
-			this._transitionManager.clearStack();
-			this._transitionManager.skipNextTransition = true;
-			this._navigator.showScreen(screenName);
+			var tabBar:TabBar = event.target as TabBar;
+			const screenName:String = tabBar.selectedItem.label;
+			_transitionManager.clearStack();
+			_transitionManager.skipNextTransition = true;
+			_navigator.showScreen(screenName);
 		}
 	}
 }
