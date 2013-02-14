@@ -1,25 +1,24 @@
 package com.sleepydesign.flumpy.core
 {
-	import com.threerings.util.Log;
 	import com.threerings.util.StringUtil;
-	
+
 	import flash.desktop.NativeApplication;
 	import flash.display.Stage;
 	import flash.display.StageQuality;
 	import flash.filesystem.File;
-	
+
 	import flump.executor.Executor;
 	import flump.executor.Future;
 	import flump.export.Files;
 	import flump.export.FlaLoader;
+	import flump.export.FlumpItem;
 	import flump.export.ProjectConf;
-	import flump.export.ProjectController;
 	import flump.export.Publisher;
 	import flump.export.Ternary;
 	import flump.export.XflLoader;
 	import flump.xfl.ParseError;
 	import flump.xfl.XflLibrary;
-	
+
 	import org.osflash.signals.Signal;
 
 	public class ExportHelper
@@ -64,43 +63,48 @@ package com.sleepydesign.flumpy.core
 
 			return _this;
 		}
-		
+
 		// TODO select from item
 		public static function getLibraryAt(index:int):XflLibrary
 		{
 			return _flashDocsGrid_dataProvider[index].lib;
 		}
-		
-		public static const assetImportSignal:Signal = new Signal(/*path*/String, /*files*/ Array);
-		public static const importErrorSignal:Signal = new Signal(/*path*/String,/*ParseError*/ Vector.<ParseError>);
 
-		// old stuff --------------------------------------------------------------
+		// for binding
+		public static const assetImportSignal:Signal = new Signal( /*path*/String, /*FlumpItem*/ Vector.<FlumpItem>);
+		public static const importErrorSignal:Signal = new Signal( /*path*/String, /*ParseError*/ Vector.<ParseError>);
 
-		private static var _importDirectory:File;
-
-		private static var _docFinder:Executor;
-		private static var _flashDocsGrid_dataProvider:Array;
-		
+		// for init
 		public static function get logs():Vector.<ParseError>
 		{
 			return _errorsGrid_dataProvider;
 		}
-		
-		private static var _errorsGrid_dataProvider:Vector.<ParseError>;
-		
+
+		// old stuff --------------------------------------------------------------
+
+		// targets
+		private static var _importDirectory:File;
 		private static var _exportChooserFile:File;
 		private static var _importChooserFile:File;
+
+		// wtf
+		private static var _docFinder:Executor;
+
+		// file-items
+		private static var _flashDocsGrid_dataProvider:Vector.<FlumpItem>;
+
+		// logs
+		private static var _errorsGrid_dataProvider:Vector.<ParseError>;
+
+		// configs
 		private static var _conf:ProjectConf = new ProjectConf();
 		private static var _confFile:File;
-
 		private static var _projectDirty:Boolean; // true if project has unsaved changes
-
-		private static const log:Log = Log.getLog(ProjectController);
 
 		private static function setImportDirectory(dir:File):void
 		{
 			_importDirectory = dir;
-			_flashDocsGrid_dataProvider = [];
+			_flashDocsGrid_dataProvider = new Vector.<FlumpItem>;
 			_errorsGrid_dataProvider = new Vector.<ParseError>;
 
 			if (dir == null)
@@ -112,7 +116,7 @@ package com.sleepydesign.flumpy.core
 			_docFinder = new Executor();
 			findFlashDocuments(dir, _docFinder, true);
 		}
-		
+
 		private static function setExportDirectory(dir:File):void
 		{
 			_exportChooserFile = dir;
@@ -123,10 +127,10 @@ package com.sleepydesign.flumpy.core
 			Files.list(base, exec).succeeded.add(function(files:Array):void
 			{
 				var isError:Boolean;
-				
+
 				if (exec.isShutdown)
 					return;
-				
+
 				for each (var file:File in files)
 				{
 					if (Files.hasExtension(file, "xfl"))
@@ -152,11 +156,11 @@ package com.sleepydesign.flumpy.core
 					else
 						addFlashDocument(file);
 				}
-				
+
 				assetImportSignal.dispatch(base.nativePath, _flashDocsGrid_dataProvider);
-				
+
 				// some error occurs
-				if(isError)
+				if (isError)
 					importErrorSignal.dispatch(base.nativePath, _errorsGrid_dataProvider);
 			});
 		}
@@ -164,52 +168,50 @@ package com.sleepydesign.flumpy.core
 		private static function addFlashDocument(file:File):void
 		{
 			var importPathLen:int = _importDirectory.nativePath.length + 1;
-			var name:String = file.nativePath.substring(importPathLen).replace(new RegExp("\\" + File.separator, "g"), "/");
+			var fileName:String = file.nativePath.substring(importPathLen).replace(new RegExp("\\" + File.separator, "g"), "/");
 
-			trace("addFlashDocument:"+name);
-			
 			var load:Future;
 			switch (Files.getExtension(file))
 			{
 				case "xfl":
-					name = name.substr(0, name.lastIndexOf("/"));
-					load = new XflLoader().load(name, file.parent);
+					fileName = fileName.substr(0, fileName.lastIndexOf("/"));
+					load = new XflLoader().load(fileName, file.parent);
 					break;
 				case "fla":
-					name = name.substr(0, name.lastIndexOf("."));
-					load = new FlaLoader().load(name, file);
+					fileName = fileName.substr(0, fileName.lastIndexOf("."));
+					load = new FlaLoader().load(fileName, file);
 					break;
 				default:
 					// Unsupported file type, ignore
 					return;
 			}
 
-			const status:DocStatus = new DocStatus(name, Ternary.UNKNOWN, Ternary.UNKNOWN, null);
+			const status:FlumpItem = new FlumpItem(fileName, Ternary.UNKNOWN, Ternary.UNKNOWN, null);
 			_flashDocsGrid_dataProvider.push(status);
 
 			load.succeeded.add(function(lib:XflLibrary):void
 			{
 				var isError:Boolean;
-				
+
 				var pub:Publisher = createPublisher();
 				status.lib = lib;
 				status.updateModified(Ternary.of(pub == null || pub.modified(lib)));
-				
+
 				for each (var err:ParseError in lib.getErrors())
 				{
 					_errorsGrid_dataProvider.push(err);
 					isError = true;
 				}
-				
+
 				status.updateValid(Ternary.of(lib.valid));
-				
+
 				// some error occurs
-				if(isError)
-					importErrorSignal.dispatch(status.path, _errorsGrid_dataProvider);
+				if (isError)
+					importErrorSignal.dispatch(status.fileName, _errorsGrid_dataProvider);
 			});
+
 			load.failed.add(function(error:Error):void
 			{
-				trace("Failed to load " + file.nativePath + ": " + error);
 				status.updateValid(Ternary.FALSE);
 				throw error;
 			});
@@ -219,129 +221,39 @@ package com.sleepydesign.flumpy.core
 		{
 			return new Publisher(_exportChooserFile, _conf);
 		}
-		
+
 		// export -------------------------------------------------------------------------
-		
+
 		public static function exportDirectory(file:File):ExportHelper
 		{
-			trace(" ^ path : " + file.nativePath);
-			
-			for each (var status:DocStatus in _flashDocsGrid_dataProvider)
+			for each (var status:FlumpItem in _flashDocsGrid_dataProvider)
 				if (status.isValid)
 					exportFlashDocument(status);
-				
+
 			setExportDirectory(file);
-			
+
 			return _this;
 		}
-		
-		private static function exportFlashDocument(status:DocStatus):void
+
+		private static function exportFlashDocument(status:FlumpItem):void
 		{
 			const stage:Stage = NativeApplication.nativeApplication.activeWindow.stage;
 			const prevQuality:String = stage.quality;
-			
+
 			stage.quality = StageQuality.BEST;
-			
+
 			try
 			{
 				createPublisher().publish(status.lib);
 			}
 			catch (e:Error)
 			{
-				//ErrorWindowMgr.showErrorPopup("Publishing Failed", e.message, _win);
+				// TODO : throw error
+				trace(e);
 			}
-			
+
 			stage.quality = prevQuality;
 			status.updateModified(Ternary.FALSE);
 		}
 	}
-}
-
-import flash.events.EventDispatcher;
-
-import flump.export.Ternary;
-import flump.xfl.XflLibrary;
-
-import org.osflash.signals.Signal;
-
-class DocStatus extends EventDispatcher
-{
-	public var path:String;
-	public var modified:String;
-	public var valid:String = PENDING;
-	public var lib:XflLibrary;
-	
-	public var invalidateSignal:Signal = new Signal(DocStatus);//(/*isValid*/Boolean);
-
-	public function DocStatus(path:String, modified:Ternary, valid:Ternary, lib:XflLibrary)
-	{
-		this.lib = lib;
-		this.path = path;
-		_uid = path;
-
-		updateModified(modified);
-		updateValid(valid);
-	}
-
-	public function updateValid(newValid:Ternary):void
-	{
-		//changeField("valid", function(... _):void
-		//{
-			if (newValid == Ternary.TRUE)
-				valid = YES;
-			else if (newValid == Ternary.FALSE)
-				valid = ERROR;
-			else
-				valid = PENDING;
-		//});
-		
-		invalidateSignal.dispatch(this, "valid");
-	}
-
-	public function get isValid():Boolean
-	{
-		return valid == YES;
-	}
-
-	public function updateModified(newModified:Ternary):void
-	{
-		//changeField("modified", function(... _):void
-		//{
-			if (newModified == Ternary.TRUE)
-				modified = YES;
-			else if (newModified == Ternary.FALSE)
-				modified = " ";
-			else
-				modified = PENDING;
-		//});
-		
-		invalidateSignal.dispatch(this, "modified");
-	}
-
-	/*
-	protected function changeField(fieldName:String, modifier:Function):void
-	{
-		const oldValue:Object = this[fieldName];
-		modifier();
-		const newValue:Object = this[fieldName];
-		
-		trace("changeField:" + uid + ":" + this[fieldName]);
-	}
-	*/
-
-	public function get uid():String
-	{
-		return _uid;
-	}
-
-	public function set uid(uid:String):void
-	{
-		_uid = uid;
-	}
-
-	protected var _uid:String;
-
-	protected static const PENDING:String = "...";
-	protected static const ERROR:String = "ERROR";
-	protected static const YES:String = "Yes";
 }

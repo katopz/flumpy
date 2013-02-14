@@ -15,6 +15,8 @@ package com.sleepydesign.flumpy.screens
 	import feathers.data.ListCollection;
 	import feathers.skins.StandardIcons;
 	
+	import flump.export.FlumpItem;
+	
 	import org.osflash.signals.Signal;
 	
 	import starling.events.Event;
@@ -182,7 +184,7 @@ package com.sleepydesign.flumpy.screens
 			return renderer;
 		}
 
-		public function addAssets(path:String, assets:Array):void
+		public function addAssets(path:String, flumpItems:Vector.<FlumpItem>):void
 		{
 			// update import path
 			_ioList.dataProvider.getItemAt(0).text = path;
@@ -196,10 +198,10 @@ package com.sleepydesign.flumpy.screens
 				_ioList.dataProvider.updateItemAt(1);
 			}
 			
-			for each(var item:Object in assets)
+			for each(var flumpItem:FlumpItem in flumpItems)
 			{
-				trace("item.path:" + item.path);
-				addAssetItem(item.path, item.invalidateSignal);
+				trace("item.fileName:" + flumpItem.fileName);
+				addAssetItem(flumpItem.fileName, flumpItem.invalidateSignal);
 			}
 		}
 			
