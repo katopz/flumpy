@@ -15,6 +15,7 @@ import starling.textures.Texture;
 public class AtlasUtil
 {
     public static function writePNG (atlas :Atlas, bytes :IDataOutput) :void {
+		// TODO : replace with native PNG
         bytes.writeBytes(PNGEncoder.encode(atlas.toBitmap()));
     }
 

@@ -1,6 +1,13 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.FlumpyApp;
+	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.core.MovieCreator;
+	import com.threerings.text.TextFieldUtil;
+	
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
+	import flash.text.TextField;
 	
 	import feathers.controls.Button;
 	import feathers.controls.Header;
@@ -11,6 +18,11 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
+	
+	import flump.export.Atlas;
+	import flump.export.AtlasUtil;
+	import flump.export.TexturePacker;
+	import flump.xfl.XflLibrary;
 	
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -66,7 +78,7 @@ package com.sleepydesign.flumpy.screens
 			_body.addChild(btn);
 			btn.addEventListener(Event.TRIGGERED, testButton_triggeredHandler);
 
-			_movieContainer = new Sprite;
+			_movieContainer = new starling.display.Sprite;
 			addChild(_movieContainer);
 		}
 
@@ -107,7 +119,7 @@ package com.sleepydesign.flumpy.screens
 			_progress.maximum = 1;
 			_progress.value = 1;
 			_headerContainer.addChild(_progress);
-			
+
 			var increaseButton:Button = new Button;
 			increaseButton.label = "+"
 			_headerContainer.addChild(increaseButton);
@@ -179,6 +191,38 @@ package com.sleepydesign.flumpy.screens
 
 		private function testButton_triggeredHandler(event:Event):void
 		{
+			// TODO : preview selected index
+			updateAtlas(ExportHelper.getLibraryAt(0));
+		}
+
+		protected function updateAtlas(_lib:XflLibrary):void
+		{
+			const scale:Number = 1;
+			const atlases:Vector.<Atlas> = TexturePacker.withLib(_lib).baseScale(scale).createAtlases();
+
+			const sprite:flash.display.Sprite = new flash.display.Sprite();
+			for (var ii:int = 0; ii < atlases.length; ++ii)
+			{
+				var atlas:Atlas = atlases[ii];
+				var atlasSprite:flash.display.Sprite = AtlasUtil.toSprite(atlas);
+				var w:int = atlasSprite.width;
+				var h:int = atlasSprite.height;
+
+				// atlas info
+				var tf:TextField = TextFieldUtil.newBuilder().text("Atlas " + ii + ": " + int(w) + "x" + int(h)).color(0x0).autoSizeCenter().build();
+
+				tf.x = 2;
+				tf.y = sprite.height;
+				sprite.addChild(tf);
+
+				// border
+				atlasSprite.graphics.lineStyle(1, 0x0000ff);
+				atlasSprite.graphics.drawRect(0, 0, w, h);
+				atlasSprite.y = sprite.height;
+				sprite.addChild(atlasSprite);
+			}
+			
+			FlumpyApp.stage2d.addChild(sprite);
 		}
 	}
 }

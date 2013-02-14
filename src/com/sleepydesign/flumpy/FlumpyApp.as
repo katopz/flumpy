@@ -1,6 +1,7 @@
 package com.sleepydesign.flumpy
 {
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
@@ -13,7 +14,9 @@ package com.sleepydesign.flumpy
 	[SWF(backgroundColor = "#FFFFFF", frameRate = "60", width = "960", height = "640", embedAsCFF = "false")]
 	public class FlumpyApp extends Sprite
 	{
-		private var _starling:Starling;
+		public static var stage2d:Stage;
+		
+		protected var _starling:Starling;
 		
 		public function FlumpyApp()
 		{
@@ -23,6 +26,8 @@ package com.sleepydesign.flumpy
 		private function onStage(...args):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onStage);
+			
+			stage2d = stage;
 			
 			// init
 			stage.align = StageAlign.TOP_LEFT;
