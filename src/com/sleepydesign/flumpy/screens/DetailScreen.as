@@ -38,7 +38,6 @@ package com.sleepydesign.flumpy.screens
 			_navigator = new ScreenNavigator();
 			
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
-			const verticalLayoutSettings2:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
 			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(AnimationScreen,
 				{
@@ -48,12 +47,9 @@ package com.sleepydesign.flumpy.screens
 					settings: verticalLayoutSettings
 				}));
 			
-			_navigator.addScreen(VERTICAL_SETTINGS, new ScreenNavigatorItem(SettingScreen,
+			_navigator.addScreen(VERTICAL_SETTINGS, new ScreenNavigatorItem(AtlasScreen,
 				{
 					//complete: VERTICAL
-				},
-				{
-					settings: verticalLayoutSettings2
 				}));
 			
 			_navigator.addScreen(LOGS, new ScreenNavigatorItem(LogsScreen,

@@ -1,23 +1,17 @@
 package com.sleepydesign.flumpy.screens
 {
 	import com.sleepydesign.flumpy.core.ExportHelper;
-
-	import feathers.controls.Label;
+	
 	import feathers.controls.List;
 	import feathers.controls.Screen;
-	import feathers.controls.TabBar;
 	import feathers.data.ListCollection;
-
+	
 	import flump.xfl.ParseError;
 
 	[Event(name = "complete", type = "starling.events.Event")]
 
 	public class LogsScreen extends Screen
 	{
-		// tab
-		private var _tabBar:TabBar;
-		private var _label:Label;
-
 		private var _logList:List;
 
 		override protected function initialize():void
