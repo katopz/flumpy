@@ -86,10 +86,10 @@ package com.sleepydesign.flumpy.core
 
 		public static function displayLibraryItem(name:String):void
 		{
-			/*
+			
 			while (_container.numChildren > 0)
 				_container.removeChildAt(0);
-
+/*
 			_previewBounds = _previewSprite.bounds;
 			_container.addChild(_previewSprite);
 			//_container.addChild(_originIcon);
