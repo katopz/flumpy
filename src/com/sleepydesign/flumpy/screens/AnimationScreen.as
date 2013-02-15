@@ -1,22 +1,23 @@
 package com.sleepydesign.flumpy.screens
 {
 	import com.sleepydesign.flumpy.core.AnimationHelper;
-	import com.sleepydesign.flumpy.core.ExportHelper;
-	import com.sleepydesign.flumpy.core.MovieCreator;
+	import com.sleepydesign.flumpy.data.ActionItemData;
 	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
 	
-	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
 	import feathers.controls.List;
+	import feathers.controls.PickerList;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
+	import feathers.controls.renderers.DefaultListItemRenderer;
+	import feathers.controls.renderers.IListItemRenderer;
 	import feathers.data.ListCollection;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
 	
-	import flump.display.Library;
+	import flump.xfl.XflLibrary;
 	
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -57,68 +58,76 @@ package com.sleepydesign.flumpy.screens
 		// body -----------------------------------------------------------------------
 
 		private var _body:ScrollContainer;
+		private var _movieContainer:starling.display.Sprite;
 
 		private function initBody():void
 		{
 			_container.addChild(_body = new ScrollContainer());
 
-			const radioLayout:HorizontalLayout = new HorizontalLayout();
-			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
-			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
-			_body.layout = radioLayout;
+			const bodyLayout:HorizontalLayout = new HorizontalLayout();
+			bodyLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
+			bodyLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
+			_body.layout = bodyLayout;
 			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-
-			var btn:Button = new Button;
-			btn.label = "test"
-			_body.addChild(btn);
-			btn.addEventListener(Event.TRIGGERED, testButton_triggeredHandler);
-
-			/*
-			[Embed(source = "/../assets-dev/mascot.zip", mimeType = "application/octet-stream")]
-			const MASCOT_ZIP:Class;
-
-			const loader:Future = LibraryLoader.loadBytes(ByteArray(new MASCOT_ZIP()));
-			loader.succeeded.add(onLibraryLoaded);
-			loader.failed.add(function(e:Error):void
-			{
-				throw e;
-			});
-			*/
-			_movieContainer = new Sprite;
-			addChild(_movieContainer);
-		}
-
-		private var _movieCreator:MovieCreator;
-		private var _movieContainer:starling.display.Sprite;
-
-		protected function onLibraryLoaded(library:Library):void
-		{
-			_movieCreator = new MovieCreator(library);
-			_movieContainer = _movieCreator.createMovie("walk");
-			//_body.addChild(_movieContainer);
-			addChild(_movieContainer);
-
-			// Clean up after ourselves when the screen goes away.
-			addEventListener(Event.REMOVED_FROM_STAGE, function(... _):void
-			{
-				_movieCreator.library.dispose();
-			});
-
-			draw();
 		}
 
 		// actions -----------------------------------------------------------------------
 
+		private var _pickerList:PickerList;
 		private var _actionList:List;
 
 		private function initActions():void
 		{
-			addChild(_actionList = new List);
+			_pickerList = new PickerList();
+			_pickerList.prompt = "Actions";
+			addChild(_pickerList);
 
-			_actionList.dataProvider = new ListCollection([{text: "walk"}]);
+			addChild(_actionList = new List);
+			_actionList.itemRendererFactory = function():IListItemRenderer
+			{
+				const renderer:DefaultListItemRenderer = new DefaultListItemRenderer();
+				renderer.labelField = "label";
+				renderer.height = 20;
+
+				return renderer;
+			}
+
+			//_actionList.dataProvider = new ListCollection([{text: "walk"}]);
 
 			_actionList.itemRendererProperties.labelField = "text";
+			_actionList.addEventListener(starling.events.Event.CHANGE, onSelectActionItem);
+
+			// prepare canvas
+			addChild(_movieContainer = new Sprite);
+			AnimationHelper.initContainer(_movieContainer);
+
+			// monitor for first valid item to show in AnimationScrren
+			MainMenuScreen.assetItemUpdatedSignal.addOnce(initAction);
+		}
+		
+		private function onSelectActionItem(event:starling.events.Event):void
+		{
+			act(List(event.target).selectedItem.text);
+		}
+		
+		private function initAction(lib:XflLibrary):void
+		{
+			trace(" ! initAction will do only once");
+			
+			if(!_actionList.dataProvider)
+				_actionList.dataProvider = new ListCollection;
+
+			var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(lib);
+
+			for each (var actionItemData:ActionItemData in actionItemDatas)
+			{
+				trace("actionItemData.movie : " + actionItemData.movie);
+				_actionList.dataProvider.push(actionItemData.toObject());
+			}
+
+			// auto show first movie
+			act(actionItemDatas[0].movie);
 		}
 
 		// footer -----------------------------------------------------------------------
@@ -156,25 +165,30 @@ package com.sleepydesign.flumpy.screens
 		{
 			const currentWidth:int = actualWidth - 320;
 
-			_actionList.y  = 32;
-			//_actionList.width = currentWidth;
-			_actionList.height = 32;
-			_actionList.validate();
-
 			_footer.width = currentWidth;
 			_footer.height = 32;
 			_footer.validate();
 
 			_container.width = currentWidth;
 			_container.height = actualHeight - _footer.height;
-
 			_container.validate();
 
 			_body.width = currentWidth;
 			_body.height = _container.height;
 			_body.validate();
 
-			// TODO : responsive to movie container size, test with bella
+			_pickerList.x = 10;
+			_pickerList.y = 32 + 4;
+			_pickerList.width = 96;
+			_pickerList.isEnabled = false;
+
+			_actionList.x = 10;
+			_actionList.y = _pickerList.y + 22;
+			_actionList.width = _pickerList.width;
+			_actionList.height = _container.height - 32 - 4 - _actionList.y;
+			_actionList.validate();
+
+			// TODO : responsive to movie container size, must test with bella
 			if (_movieContainer)
 			{
 				_movieContainer.x = currentWidth * .5;
@@ -182,25 +196,9 @@ package com.sleepydesign.flumpy.screens
 			}
 		}
 
-		private function testButton_triggeredHandler(event:Event):void
+		private function act(action:String):void
 		{
-			AnimationHelper.init(ExportHelper.getLibraryAt(0));
-
-			AnimationHelper.initContainer(_movieContainer);
-			AnimationHelper.displayLibraryItem("walk");
-		}
-
-		private function radioGroup_changeHandler(event:Event):void
-		{
-			//_label.text = "selectedIndex: " + _tabBar.selectedIndex.toString();
-			//invalidate();
-			trace("todo");
-		}
-
-		private function pageIndicator_changeHandler(event:Event):void
-		{
-			//invalidate();
-			trace("todo");
+			AnimationHelper.displayLibraryItem(action);
 		}
 	}
 }
