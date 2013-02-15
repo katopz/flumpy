@@ -8,10 +8,10 @@ package com.sleepydesign.flumpy.screens
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
-	import feathers.controls.Radio;
+	import feathers.controls.List;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
-	import feathers.core.ToggleGroup;
+	import feathers.data.ListCollection;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
@@ -34,16 +34,16 @@ package com.sleepydesign.flumpy.screens
 
 			// body
 			initBody();
-			
+
+			// actions
+			initActions();
+
 			// footer
 			initFooter();
-			
-			// header
-			initHeader();
 		}
 
 		// layout -----------------------------------------------------------------------
-		
+
 		private var _container:ScrollContainer;
 
 		private function initLayout():void
@@ -53,27 +53,27 @@ package com.sleepydesign.flumpy.screens
 			_container.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_container.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 		}
-		
+
 		// body -----------------------------------------------------------------------
 
 		private var _body:ScrollContainer;
-		
+
 		private function initBody():void
 		{
 			_container.addChild(_body = new ScrollContainer());
-			
+
 			const radioLayout:HorizontalLayout = new HorizontalLayout();
 			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
 			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
 			_body.layout = radioLayout;
 			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			
-			var btn:Button=new Button;
+
+			var btn:Button = new Button;
 			btn.label = "test"
 			_body.addChild(btn);
 			btn.addEventListener(Event.TRIGGERED, testButton_triggeredHandler);
-			
+
 			/*
 			[Embed(source = "/../assets-dev/mascot.zip", mimeType = "application/octet-stream")]
 			const MASCOT_ZIP:Class;
@@ -104,44 +104,21 @@ package com.sleepydesign.flumpy.screens
 			{
 				_movieCreator.library.dispose();
 			});
-			
+
 			draw();
 		}
 
-		// header -----------------------------------------------------------------------
+		// actions -----------------------------------------------------------------------
 
-		private var _header:Header;
+		private var _actionList:List;
 
-		private function initHeader():void
+		private function initActions():void
 		{
-			_header = new Header();
-			_container.addChild(_header);
+			addChild(_actionList = new List);
 
-			const radioLayout:HorizontalLayout = new HorizontalLayout();
-			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
-			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
-			radioLayout.gap = 20 * dpiScale;
-			radioLayout.padding = 8;
+			_actionList.dataProvider = new ListCollection([{text: "walk"}]);
 
-			var _radioGroup:ToggleGroup = new ToggleGroup();
-			_radioGroup.addEventListener(Event.CHANGE, radioGroup_changeHandler);
-
-			var _radioContainer:ScrollContainer = new ScrollContainer();
-			_radioContainer.layout = radioLayout;
-			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-
-			var _radio1:Radio = new Radio();
-			_radio1.label = "walk";
-			_radioGroup.addItem(_radio1);
-			_radioContainer.addChild(_radio1);
-
-			var _radio2:Radio = new Radio();
-			_radio2.label = "run";
-			_radioGroup.addItem(_radio2);
-			_radioContainer.addChild(_radio2);
-
-			_header.addChild(_radioContainer);
+			_actionList.itemRendererProperties.labelField = "text";
 		}
 
 		// footer -----------------------------------------------------------------------
@@ -179,36 +156,36 @@ package com.sleepydesign.flumpy.screens
 		{
 			const currentWidth:int = actualWidth - 320;
 
-			_header.width = currentWidth;
-			_header.height = 32;
-			_header.validate();
+			_actionList.y  = 32;
+			//_actionList.width = currentWidth;
+			_actionList.height = 32;
+			_actionList.validate();
 
 			_footer.width = currentWidth;
 			_footer.height = 32;
 			_footer.validate();
 
-			_container.y = _header.height;
 			_container.width = currentWidth;
-			_container.height = actualHeight - _header.height - _footer.height;
+			_container.height = actualHeight - _footer.height;
 
 			_container.validate();
-			
+
 			_body.width = currentWidth;
 			_body.height = _container.height;
 			_body.validate();
-			
+
 			// TODO : responsive to movie container size, test with bella
-			if(_movieContainer)
+			if (_movieContainer)
 			{
-				_movieContainer.x = currentWidth*.5;
-				_movieContainer.y = 32*3 + _container.height*.5;
+				_movieContainer.x = currentWidth * .5;
+				_movieContainer.y = 32 * 3 + _container.height * .5;
 			}
 		}
-		
+
 		private function testButton_triggeredHandler(event:Event):void
 		{
 			AnimationHelper.init(ExportHelper.getLibraryAt(0));
-			
+
 			AnimationHelper.initContainer(_movieContainer);
 			AnimationHelper.displayLibraryItem("walk");
 		}

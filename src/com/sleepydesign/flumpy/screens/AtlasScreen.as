@@ -15,6 +15,7 @@ package com.sleepydesign.flumpy.screens
 	import feathers.controls.ProgressBar;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
+	import feathers.controls.Slider;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
@@ -105,6 +106,8 @@ package com.sleepydesign.flumpy.screens
 			_headerContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_headerContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
+			// scale
+			
 			var scaleLabel:Label = new Label();
 			scaleLabel.text = "Scale";
 			_headerContainer.addChild(scaleLabel);
@@ -114,10 +117,12 @@ package com.sleepydesign.flumpy.screens
 			_headerContainer.addChild(decreaseButton);
 			decreaseButton.addEventListener(Event.TRIGGERED, trace);
 
-			var _progress:ProgressBar = new ProgressBar();
+			var _progress:Slider = new Slider();
 			_progress.minimum = 0;
 			_progress.maximum = 1;
 			_progress.value = 1;
+			_progress.step = 0.1;
+			_progress.addEventListener(Event.CHANGE, trace);
 			_headerContainer.addChild(_progress);
 
 			var increaseButton:Button = new Button;
