@@ -16,6 +16,7 @@ package com.sleepydesign.flumpy.screens
 	import feathers.skins.StandardIcons;
 	
 	import flump.export.FlumpItem;
+	import flump.xfl.XflLibrary;
 	
 	import org.osflash.signals.Signal;
 	
@@ -29,10 +30,12 @@ package com.sleepydesign.flumpy.screens
 		public static const SHOW_VERTICAL:String = "showVertical";
 
 		// left stuff
-		
 		private var _header:Header;
 		private var _ioList:List;
 		private var _assetList:List;
+		
+		// inject
+		public static const assetItemUpdatedSignal:Signal = new Signal(XflLibrary);
 
 		override protected function initialize():void
 		{
@@ -235,6 +238,9 @@ package com.sleepydesign.flumpy.screens
 			var _assetItemDataObject:Object = _assetList.dataProvider.getItemAt(index);
 			_assetItemDataObject["accessory"] = assetItemDataObject["accessory"];
 			_assetList.dataProvider.updateItemAt(index);
+			
+			// tell AnimationScrren that item is ready to show
+			assetItemUpdatedSignal.dispatch(ExportHelper.getLibraryAt(index));
 		}
 		
 		override protected function draw():void

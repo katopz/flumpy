@@ -39,7 +39,7 @@ package com.sleepydesign.flumpy.screens
 			
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
-			_navigator.addScreen(VERTICAL, new ScreenNavigatorItem(AnimationScreen,
+			_navigator.addScreen(ANIMATION, new ScreenNavigatorItem(AnimationScreen,
 				{
 					//complete: VERTICAL
 				},
@@ -47,7 +47,7 @@ package com.sleepydesign.flumpy.screens
 					settings: verticalLayoutSettings
 				}));
 			
-			_navigator.addScreen(VERTICAL_SETTINGS, new ScreenNavigatorItem(AtlasScreen,
+			_navigator.addScreen(ATLAS, new ScreenNavigatorItem(AtlasScreen,
 				{
 					//complete: VERTICAL
 				}));
@@ -66,17 +66,17 @@ package com.sleepydesign.flumpy.screens
 			_tabBar = new TabBar();
 			_tabBar.dataProvider = new ListCollection(
 				[
-					{ label: "Animation" },
-					{ label: "Atlas" },
-					{ label: "Logs" }
+					{ label: ANIMATION },
+					{ label: ATLAS },
+					{ label: LOGS }
 				]);
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
 			_tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
 		}
 		
-		private static const VERTICAL:String = "Animation";
-		private static const VERTICAL_SETTINGS:String = "Atlas";
+		private static const ANIMATION:String = "Animation";
+		private static const ATLAS:String = "Atlas";
 		private static const LOGS:String = "Logs";
 		
 		private var _navigator:ScreenNavigator;

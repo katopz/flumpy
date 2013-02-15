@@ -48,11 +48,12 @@ package com.sleepydesign.flumpy.data
 		public function toObject():Object
 		{
 			var result:Object = {text: filename};
-
+			
 			var errorLabel:Label = new Label;
 			errorLabel.text = isValid?"fine":((valid=="init")?"[Processing]":"[Error] missing swf");
 			
 			result.accessory = errorLabel;
+			
 
 			return result;
 		}

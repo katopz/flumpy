@@ -1,5 +1,7 @@
 package com.sleepydesign.flumpy.core
 {
+	import com.sleepydesign.flumpy.data.ActionItemData;
+	
 	import flash.geom.Rectangle;
 	
 	import flump.display.Movie;
@@ -27,10 +29,10 @@ package com.sleepydesign.flumpy.core
 		private static var _project:ProjectConf;
 
 		// information
-		private static var _controlsWindow_movies_dataProvider:Array;
+		private static var _controlsWindow_movies_dataProvider:Vector.<ActionItemData>;
 		private static var _controlsWindow_textures_dataProvider:Array;
 
-		public static function init(lib:XflLibrary, project:ProjectConf = null):void
+		public static function init(lib:XflLibrary, project:ProjectConf = null):Vector.<ActionItemData>
 		{
 			_lib = lib;
 			_project = project;
@@ -45,12 +47,12 @@ package com.sleepydesign.flumpy.core
 				return _lib.isExported(movie);
 			});
 
-			_controlsWindow_movies_dataProvider = [];
+			_controlsWindow_movies_dataProvider = new Vector.<ActionItemData>;
 
 			for each (var movie:MovieMold in previewMovies)
-			{
-				_controlsWindow_movies_dataProvider.push({movie: movie.id, memory: _creator.getMemoryUsage(movie.id), drawn: _creator.getMaxDrawn(movie.id)});
-			}
+				_controlsWindow_movies_dataProvider.push(new ActionItemData(movie.id, _creator.getMemoryUsage(movie.id),  _creator.getMaxDrawn(movie.id)));
+			
+			//trace("_controlsWindow_movies_dataProvider: " + _controlsWindow_movies_dataProvider);
 
 			var totalUsage:int = 0;
 			_controlsWindow_textures_dataProvider = [];
@@ -73,6 +75,8 @@ package com.sleepydesign.flumpy.core
 			}
 			
 			trace("atlasSize: " + ((1.0 - (atlasUsed/atlasSize)) * 100).toPrecision(4) + "%");
+			
+			return _controlsWindow_movies_dataProvider;
 		}
 
 		public static function initContainer(container:starling.display.Sprite):void
