@@ -126,6 +126,10 @@ package com.sleepydesign.flumpy.screens
 			// mediator -------------------------------------------------------------------------
 			
 			ExportHelper.assetImportSignal.add(addAssets);
+			
+			DetailScreen.initializedSignal.add(function(detailScreen:DetailScreen):void {
+				trace("TODO : DetailScreen");
+			});
 		}
 		
 		public function addAssets(path:String, flumpItems:Vector.<FlumpItem>):void
@@ -196,10 +200,13 @@ package com.sleepydesign.flumpy.screens
 			
 			if(actionItemDatas.length > 0)
 			{
+				DetailScreen.currentScreenID = DetailScreen.ANIMATION_SCREEN;
+				/*
 				DetailScreen.setCurrentScreenID(DetailScreen.ANIMATION_SCREEN, function ():void{
 					// animations is hot
 					assetItemUpdatedSignal.dispatch(actionItemDatas);
 				});
+				*/
 			}else{
 				// no animation? bad item!
 				DetailScreen.currentScreenID = DetailScreen.LOGS_SCREEN;
@@ -208,15 +215,15 @@ package com.sleepydesign.flumpy.screens
 		
 		override protected function draw():void
 		{
-			_header.width = actualWidth;
+			_header.width = actualWidth - 8;
 			_header.validate();
 			
 			_ioList.y = 32;
-			_ioList.width = actualWidth;
+			_ioList.width = actualWidth - 8;
 			_ioList.height = 32*2;
 
 			_assetList.y = _ioList.y + _ioList.height + 32;
-			_assetList.width = actualWidth;
+			_assetList.width = actualWidth - 8;
 			_assetList.height = actualHeight - _assetList.y;
 		}
 

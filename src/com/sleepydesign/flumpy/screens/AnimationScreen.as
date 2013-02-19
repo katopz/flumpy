@@ -17,6 +17,8 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
 	
+	import org.osflash.signals.Signal;
+	
 	import starling.display.Sprite;
 	import starling.events.Event;
 
@@ -24,6 +26,9 @@ package com.sleepydesign.flumpy.screens
 
 	public class AnimationScreen extends Screen
 	{
+		// mediator.startup
+		public static const initializedSignal:Signal = new Signal(AnimationScreen);
+		
 		public var settings:VerticalLayoutSettings;
 
 		override protected function initialize():void
@@ -39,6 +44,8 @@ package com.sleepydesign.flumpy.screens
 
 			// footer
 			initFooter();
+			
+			initializedSignal.dispatch(this);
 		}
 
 		// layout -----------------------------------------------------------------------
@@ -71,7 +78,7 @@ package com.sleepydesign.flumpy.screens
 		}
 
 		// actions -----------------------------------------------------------------------
-
+		
 		private var _pickerList:PickerList;
 		private var _actionList:List;
 

@@ -14,12 +14,17 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayoutData;
 	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
 	
+	import org.osflash.signals.Signal;
+	
 	import starling.events.Event;
 
 	[Event(name="complete",type="starling.events.Event")]
 
 	public class DetailScreen extends PanelScreen
 	{
+		// mediator.startup
+		public static const initializedSignal:Signal = new Signal(DetailScreen);
+		
 		private static var _this:DetailScreen;
 		
 		public function DetailScreen()
@@ -76,6 +81,13 @@ package com.sleepydesign.flumpy.screens
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
 			_tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
+			
+			currentScreenID = LOGS_SCREEN;
+			
+			// startup
+			AnimationScreen.initializedSignal.add(function(animationScreen:AnimationScreen):void {
+				trace("TODO : AnimationScreen");
+			});
 		}
 		
 		public static const ANIMATION_SCREEN:String = "Animation";
@@ -109,6 +121,7 @@ package com.sleepydesign.flumpy.screens
 			_tabBar.selectedIndex = selectedIndex;
 		}
 		
+		/*
 		public static function setCurrentScreenID(screenID:String, callback:Function = null):void
 		{
 			currentScreenID = screenID;
@@ -116,5 +129,6 @@ package com.sleepydesign.flumpy.screens
 			if(callback is Function)
 				callback();
 		}
+		*/
 	}
 }
