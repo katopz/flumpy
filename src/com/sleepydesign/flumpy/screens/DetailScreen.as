@@ -1,5 +1,8 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.core.AnimationHelper;
+	import com.sleepydesign.flumpy.core.ExportHelper;
+	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
 	
 	import feathers.controls.Button;
@@ -83,11 +86,6 @@ package com.sleepydesign.flumpy.screens
 			addChild(_tabBar);
 			
 			currentScreenID = LOGS_SCREEN;
-			
-			// startup
-			AnimationScreen.initializedSignal.add(function(animationScreen:AnimationScreen):void {
-				trace("TODO : AnimationScreen");
-			});
 		}
 		
 		public static const ANIMATION_SCREEN:String = "Animation";
@@ -119,6 +117,32 @@ package com.sleepydesign.flumpy.screens
 				return;
 				
 			_tabBar.selectedIndex = selectedIndex;
+		}
+		
+		public static function showItemAt(index:int):void
+		{
+			// tell AnimationScrren that item is ready to show
+			var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(ExportHelper.getLibraryAt(index));
+			
+			if(actionItemDatas.length > 0)
+			{
+				AnimationScreen.initializedSignal.add(function(animationScreen:AnimationScreen):void {
+					animationScreen.showActionItemDatas(actionItemDatas);
+					
+				});
+				
+				currentScreenID = ANIMATION_SCREEN;
+				
+				/*
+				DetailScreen.setCurrentScreenID(DetailScreen.ANIMATION_SCREEN, function ():void{
+				// animations is hot
+				assetItemUpdatedSignal.dispatch(actionItemDatas);
+				});
+				*/
+			}else{
+				// no animation? bad item!
+				currentScreenID = LOGS_SCREEN;
+			}
 		}
 		
 		/*

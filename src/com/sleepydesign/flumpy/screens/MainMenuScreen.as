@@ -187,30 +187,7 @@ package com.sleepydesign.flumpy.screens
 			
 			// show 1st item
 			if(index == 0)
-			{
 				_assetList.selectedIndex = 0;
-				//showItemAt(0);
-			}
-		}
-		
-		private function showItemAt(index:int):void
-		{
-			// tell AnimationScrren that item is ready to show
-			var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(ExportHelper.getLibraryAt(index));
-			
-			if(actionItemDatas.length > 0)
-			{
-				DetailScreen.currentScreenID = DetailScreen.ANIMATION_SCREEN;
-				/*
-				DetailScreen.setCurrentScreenID(DetailScreen.ANIMATION_SCREEN, function ():void{
-					// animations is hot
-					assetItemUpdatedSignal.dispatch(actionItemDatas);
-				});
-				*/
-			}else{
-				// no animation? bad item!
-				DetailScreen.currentScreenID = DetailScreen.LOGS_SCREEN;
-			}
 		}
 		
 		override protected function draw():void
@@ -235,18 +212,7 @@ package com.sleepydesign.flumpy.screens
 		private function list_changeHandler(event:Event):void
 		{
 			var list:List = event.target as List;
-			
-			showItemAt(list.selectedIndex);
-			
-			/*
-			const eventType:String = _assetList.selectedItem.event as String;
-
-			// ignore for now
-			if (eventType == SHOW_VERTICAL)
-				return;
-
-			dispatchEventWith(eventType);
-			*/
+			DetailScreen.showItemAt(list.selectedIndex);
 		}
 	}
 }

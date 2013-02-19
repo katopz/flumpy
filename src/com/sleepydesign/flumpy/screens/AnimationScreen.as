@@ -108,7 +108,7 @@ package com.sleepydesign.flumpy.screens
 			AnimationHelper.initContainer(_movieContainer);
 
 			// monitor for first valid item to show in AnimationScrren
-			MainMenuScreen.assetItemUpdatedSignal.addOnce(initAction);
+			//MainMenuScreen.assetItemUpdatedSignal.addOnce(initAction);
 		}
 		
 		private function onSelectActionItem(event:starling.events.Event):void
@@ -116,24 +116,26 @@ package com.sleepydesign.flumpy.screens
 			act(List(event.target).selectedItem.text);
 		}
 		
+		/*
 		private function initAction(actionItemDatas:Vector.<ActionItemData>):void
 		{
 			trace(" ! initAction will do only once");
 			
 			if(!_actionList.dataProvider)
-				_actionList.dataProvider = new ListCollection;
-
+			_actionList.dataProvider = new ListCollection;
+			
 			trace(" ! actionItemDatas : " + actionItemDatas);
 			
 			for each (var actionItemData:ActionItemData in actionItemDatas)
 			{
-				//trace("actionItemData.movie : " + actionItemData.movie);
-				_actionList.dataProvider.push(actionItemData.toObject());
+			//trace("actionItemData.movie : " + actionItemData.movie);
+			_actionList.dataProvider.push(actionItemData.toObject());
 			}
-
+			
 			// auto show first movie
 			act(actionItemDatas[0].movie);
 		}
+		*/
 
 		// footer -----------------------------------------------------------------------
 
@@ -204,6 +206,32 @@ package com.sleepydesign.flumpy.screens
 		private function act(action:String):void
 		{
 			AnimationHelper.displayLibraryItem(action);
+		}
+		
+		public function showActionItemDatas(actionItemDatas:Vector.<ActionItemData>):void
+		{
+			trace(" ! initAction will do only once");
+			
+			if(!_actionList.dataProvider)
+				_actionList.dataProvider = new ListCollection;
+			
+			trace(" ! actionItemDatas : " + actionItemDatas);
+			
+			for each (var actionItemData:ActionItemData in actionItemDatas)
+			{
+				//trace("actionItemData.movie : " + actionItemData.movie);
+				_actionList.dataProvider.push(actionItemData.toObject());
+			}
+			
+			// auto show first movie
+			_actionList.selectedIndex = 0;
+			//act(actionItemDatas[0].movie);
+		}
+		
+		private function list_changeHandler(event:Event):void
+		{
+			var list:List = event.target as List;
+			DetailScreen.showItemAt(list.selectedIndex);
 		}
 	}
 }
