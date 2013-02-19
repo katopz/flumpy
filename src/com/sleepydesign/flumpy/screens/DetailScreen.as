@@ -20,8 +20,11 @@ package com.sleepydesign.flumpy.screens
 
 	public class DetailScreen extends PanelScreen
 	{
+		private static var _this:DetailScreen;
+		
 		public function DetailScreen()
 		{
+			_this = this;
 			addEventListener(FeathersEventType.INITIALIZE, initializeHandler);
 		}
 
@@ -79,6 +82,8 @@ package com.sleepydesign.flumpy.screens
 		public static const ATLAS_SCREEN:String = "Atlas";
 		public static const LOGS_SCREEN:String = "Logs";
 		
+		public static const _SCREENS:Vector.<String> = Vector.<String>([ANIMATION_SCREEN, ATLAS_SCREEN, LOGS_SCREEN]);
+		
 		private static var _navigator:ScreenNavigator;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 
@@ -92,12 +97,33 @@ package com.sleepydesign.flumpy.screens
 			_transitionManager.clearStack();
 			_transitionManager.skipNextTransition = true;
 			_navigator.showScreen(screenName);
+			
+			if(_whenInit is Function)
+				_whenInit();
 		}
 		
 		public static function set currentScreenID(screenID:String):void
 		{
-			const screens:Vector.<String> = _navigator.getScreenIDs();
-			_tabBar.selectedIndex = screens.indexOf(screenID);
+			const selectedIndex:int = _SCREENS.indexOf(screenID);
+			
+			if(_tabBar.selectedIndex == selectedIndex)
+				return;
+				
+			_tabBar.selectedIndex = selectedIndex;
+		}
+		
+		public static function setCurrentScreenID(screenID:String):DetailScreen
+		{
+			currentScreenID = screenID;
+			
+			return _this;
+		}
+		
+		public var  _whenInit:Function;
+		
+		public function whenInit(func:Function):void
+		{
+			_whenInit = func;
 		}
 	}
 }

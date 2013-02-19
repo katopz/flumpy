@@ -48,7 +48,8 @@ package flump.export
 			else
 				modified = PENDING;
 			
-			invalidateSignal.dispatch(this, "modified");
+			// TODO : auto monitor
+			//invalidateSignal.dispatch(this, "modified");
 		}
 		
 		private static const PENDING:String = "...";
