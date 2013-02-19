@@ -10,8 +10,6 @@ package com.sleepydesign.flumpy.screens
 	import feathers.controls.Header;
 	import feathers.controls.List;
 	import feathers.controls.Screen;
-	import feathers.controls.renderers.DefaultListItemRenderer;
-	import feathers.controls.renderers.IListItemRenderer;
 	import feathers.data.ListCollection;
 	import feathers.skins.StandardIcons;
 	
@@ -46,18 +44,18 @@ package com.sleepydesign.flumpy.screens
 			// import/export -----------------------------------------------------------
 			
 			var _importButton:Button = new Button();
-			_importButton.label = "import";
+			_importButton.label = "browse import";
 			_importButton.addEventListener(Event.TRIGGERED, function importButton_triggeredHandler(event:Event):void
 			{
 				// browse via desktop
 				flumpy.importFolder().whenSuccess(function(... args):void
 				{
-					ExportHelper.importDirectory(args[0]);
+					ExportHelper.setImportDirectory(args[0]);
 				});
 			});
 			
 			var _exportButton:Button = new Button();
-			_exportButton.label = "export";
+			_exportButton.label = "browse export";
 			_exportButton.addEventListener(Event.TRIGGERED, function exportButton_triggeredHandler(event:Event):void
 			{
 				// browse via desktop
@@ -93,6 +91,18 @@ package com.sleepydesign.flumpy.screens
 			
 			_ioList.isSelectable = false;
 			
+			// export all button -------------------------------------------------------------------------
+			
+			var _exportAllButton:Button = new Button();
+			addChild(_exportAllButton);
+			_exportAllButton.x = 4;
+			_exportAllButton.y = 48*2 + 4;
+			_exportAllButton.label = "export all";
+			_exportAllButton.addEventListener(Event.TRIGGERED, function exportButton_triggeredHandler(event:Event):void
+			{
+				ExportHelper.export();
+			});
+			
 			// assets list -------------------------------------------------------------------------
 
 			addChild(_assetList = new List);
@@ -127,6 +137,8 @@ package com.sleepydesign.flumpy.screens
 			// not choose output folder just yet 
 			if(String(_ioList.dataProvider.getItemAt(1).text).indexOf("Please") == 0)
 			{
+				ExportHelper.exportDirectory(ExportHelper.importDirectory);
+				
 				// update export path default to import path
 				_ioList.dataProvider.getItemAt(1).text = path;
 				_ioList.dataProvider.updateItemAt(1);
@@ -171,7 +183,10 @@ package com.sleepydesign.flumpy.screens
 			
 			// show 1st item
 			if(index == 0)
-				showItemAt(0);
+			{
+				_assetList.selectedIndex = 0;
+				//showItemAt(0);
+			}
 		}
 		
 		private function showItemAt(index:int):void
@@ -181,10 +196,10 @@ package com.sleepydesign.flumpy.screens
 			
 			if(actionItemDatas.length > 0)
 			{
-				DetailScreen.currentScreenID = DetailScreen.ANIMATION_SCREEN;
-				
-				// animations is hot
-				assetItemUpdatedSignal.dispatch(actionItemDatas);
+				DetailScreen.setCurrentScreenID(DetailScreen.ANIMATION_SCREEN, function ():void{
+					// animations is hot
+					assetItemUpdatedSignal.dispatch(actionItemDatas);
+				});
 			}else{
 				// no animation? bad item!
 				DetailScreen.currentScreenID = DetailScreen.LOGS_SCREEN;
@@ -200,7 +215,7 @@ package com.sleepydesign.flumpy.screens
 			_ioList.width = actualWidth;
 			_ioList.height = 32*2;
 
-			_assetList.y = _ioList.y + _ioList.height;
+			_assetList.y = _ioList.y + _ioList.height + 32;
 			_assetList.width = actualWidth;
 			_assetList.height = actualHeight - _assetList.y;
 		}
@@ -212,6 +227,11 @@ package com.sleepydesign.flumpy.screens
 
 		private function list_changeHandler(event:Event):void
 		{
+			var list:List = event.target as List;
+			
+			showItemAt(list.selectedIndex);
+			
+			/*
 			const eventType:String = _assetList.selectedItem.event as String;
 
 			// ignore for now
@@ -219,6 +239,7 @@ package com.sleepydesign.flumpy.screens
 				return;
 
 			dispatchEventWith(eventType);
+			*/
 		}
 	}
 }

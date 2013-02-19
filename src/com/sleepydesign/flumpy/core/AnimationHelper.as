@@ -100,7 +100,7 @@ package com.sleepydesign.flumpy.core
 			_container.addChild(_previewSprite);
 			
 			// bound
-			trace("_previewSprite.bounds:"+ _previewSprite.bounds);
+			//trace("_previewSprite.bounds:"+ _previewSprite.bounds);
 			
 			// animate it
 			if (_previewSprite is Movie)

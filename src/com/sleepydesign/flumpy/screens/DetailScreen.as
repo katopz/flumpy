@@ -97,9 +97,6 @@ package com.sleepydesign.flumpy.screens
 			_transitionManager.clearStack();
 			_transitionManager.skipNextTransition = true;
 			_navigator.showScreen(screenName);
-			
-			if(_whenInit is Function)
-				_whenInit();
 		}
 		
 		public static function set currentScreenID(screenID:String):void
@@ -112,18 +109,12 @@ package com.sleepydesign.flumpy.screens
 			_tabBar.selectedIndex = selectedIndex;
 		}
 		
-		public static function setCurrentScreenID(screenID:String):DetailScreen
+		public static function setCurrentScreenID(screenID:String, callback:Function = null):void
 		{
 			currentScreenID = screenID;
 			
-			return _this;
-		}
-		
-		public var  _whenInit:Function;
-		
-		public function whenInit(func:Function):void
-		{
-			_whenInit = func;
+			if(callback is Function)
+				callback();
 		}
 	}
 }

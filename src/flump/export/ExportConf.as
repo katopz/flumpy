@@ -17,7 +17,7 @@ import com.threerings.util.StringUtil;
 
 public class ExportConf
 {
-    public var name :String = "default";
+    public var name :String = null;
     public var format :String = JSONZipFormat.NAME;
     public var scale :Number = 1;
     /** The size of the border around each texture in an atlas, in pixels */

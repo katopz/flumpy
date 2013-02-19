@@ -116,9 +116,11 @@ package com.sleepydesign.flumpy.screens
 			if(!_actionList.dataProvider)
 				_actionList.dataProvider = new ListCollection;
 
+			trace(" ! actionItemDatas : " + actionItemDatas);
+			
 			for each (var actionItemData:ActionItemData in actionItemDatas)
 			{
-				trace("actionItemData.movie : " + actionItemData.movie);
+				//trace("actionItemData.movie : " + actionItemData.movie);
 				_actionList.dataProvider.push(actionItemData.toObject());
 			}
 

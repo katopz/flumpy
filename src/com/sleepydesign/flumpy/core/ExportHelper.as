@@ -48,7 +48,7 @@ package com.sleepydesign.flumpy.core
 			return _this;
 		}
 
-		public static function importDirectory(file:File):ExportHelper
+		public static function setImportDirectory(file:File):ExportHelper
 		{
 			trace(" ^ path : " + file.nativePath);
 
@@ -56,10 +56,10 @@ package com.sleepydesign.flumpy.core
 			{
 				_importChooserFile = file; //, file.nativePath, file.nativePath);
 				//todo : select export path
-				_exportChooserFile = file; //, file.nativePath, file.nativePath);
+				//_exportChooserFile = file; //, file.nativePath, file.nativePath);
 			}
 
-			setImportDirectory(file);
+			_setImportDirectory(file);
 
 			return _this;
 		}
@@ -84,6 +84,12 @@ package com.sleepydesign.flumpy.core
 
 		// targets
 		private static var _importDirectory:File;
+		
+		public static function get importDirectory():File
+		{
+			return _importDirectory;
+		}
+		
 		private static var _exportChooserFile:File;
 		private static var _importChooserFile:File;
 
@@ -100,8 +106,9 @@ package com.sleepydesign.flumpy.core
 		private static var _conf:ProjectConf = new ProjectConf();
 		private static var _confFile:File;
 		private static var _projectDirty:Boolean; // true if project has unsaved changes
+		//public static var importDirectory:File;
 
-		private static function setImportDirectory(dir:File):void
+		private static function _setImportDirectory(dir:File):void
 		{
 			_importDirectory = dir;
 			_flashDocsGrid_dataProvider = new Vector.<FlumpItem>;
@@ -117,7 +124,7 @@ package com.sleepydesign.flumpy.core
 			findFlashDocuments(dir, _docFinder, true);
 		}
 
-		private static function setExportDirectory(dir:File):void
+		private static function _setExportDirectory(dir:File):void
 		{
 			_exportChooserFile = dir;
 		}
@@ -193,6 +200,7 @@ package com.sleepydesign.flumpy.core
 			{
 				var isError:Boolean;
 
+				// TOFIX : this is dependency bad practise, publisher shouldn't be call until export phase
 				var pub:Publisher = createPublisher();
 				status.lib = lib;
 				status.updateModified(Ternary.of(pub == null || pub.modified(lib)));
@@ -219,6 +227,10 @@ package com.sleepydesign.flumpy.core
 
 		private static function createPublisher():Publisher
 		{
+			// TOFIX : this is dependency bad practise, publisher shouldn't be call until export phase
+			if(!_exportChooserFile)
+				return null;
+			
 			return new Publisher(_exportChooserFile, _conf);
 		}
 
@@ -226,11 +238,7 @@ package com.sleepydesign.flumpy.core
 
 		public static function exportDirectory(file:File):ExportHelper
 		{
-			for each (var status:FlumpItem in _flashDocsGrid_dataProvider)
-				if (status.isValid)
-					exportFlashDocument(status);
-
-			setExportDirectory(file);
+			_setExportDirectory(file);
 
 			return _this;
 		}
@@ -254,6 +262,15 @@ package com.sleepydesign.flumpy.core
 
 			stage.quality = prevQuality;
 			status.updateModified(Ternary.FALSE);
+		}
+		
+		public static function export():void
+		{
+			trace(" * export");
+			
+			for each (var status:FlumpItem in _flashDocsGrid_dataProvider)
+				if (status.isValid)
+					exportFlashDocument(status);
 		}
 	}
 }
