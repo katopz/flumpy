@@ -1,22 +1,21 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.core.AnimationHelper;
 	import com.sleepydesign.flumpy.core.ExportHelper;
-	import com.sleepydesign.flumpy.data.AssetItemData;
+	import com.sleepydesign.flumpy.model.ActionItemData;
+	import com.sleepydesign.flumpy.model.AssetItemData;
 	
 	import feathers.controls.Button;
-	import feathers.controls.Check;
 	import feathers.controls.GroupedList;
 	import feathers.controls.Header;
 	import feathers.controls.List;
 	import feathers.controls.Screen;
-	import feathers.controls.ToggleSwitch;
 	import feathers.controls.renderers.DefaultListItemRenderer;
 	import feathers.controls.renderers.IListItemRenderer;
 	import feathers.data.ListCollection;
 	import feathers.skins.StandardIcons;
 	
 	import flump.export.FlumpItem;
-	import flump.xfl.XflLibrary;
 	
 	import org.osflash.signals.Signal;
 	
@@ -35,15 +34,14 @@ package com.sleepydesign.flumpy.screens
 		private var _assetList:List;
 		
 		// inject
-		public static const assetItemUpdatedSignal:Signal = new Signal(XflLibrary);
+		public static const assetItemUpdatedSignal:Signal = new Signal(Vector.<ActionItemData>);
 
 		override protected function initialize():void
 		{
 			// header ------------------------------------------------------------------
 			
-			_header = new Header();
+			addChild(_header = new Header);
 			_header.title = "Flumpy v1.0";
-			addChild(_header);
 			
 			// import/export -----------------------------------------------------------
 			
@@ -112,7 +110,6 @@ package com.sleepydesign.flumpy.screens
 			]);
 			*/
 			
-			//_assetList.itemRendererFactory = tileListItemRendererFactory;
 			_assetList.itemRendererProperties.labelField = "text";
 			_assetList.addEventListener(Event.CHANGE, list_changeHandler);
 			
@@ -121,72 +118,6 @@ package com.sleepydesign.flumpy.screens
 			ExportHelper.assetImportSignal.add(addAssets);
 		}
 		
-		protected function tileListItemRendererFactory():IListItemRenderer
-		{
-			const renderer:DefaultListItemRenderer = new DefaultListItemRenderer();
-			renderer.labelField = "label";
-			renderer.height = 40;
-			renderer.labelOffsetX = -6; //padding;
-			renderer.labelOffsetY = -9;
-
-			//renderer.iconSourceField = "texture";
-			//renderer.iconPosition = Button.ICON_POSITION_TOP;
-
-			/*
-			const padding:int = 8;
-
-			// FLA status
-			var _flaCheck:Check = new Check();
-			_flaCheck.isSelected = (item.missing && item.missing.indexOf("fla") == -1);// || !item.missing;
-			_flaCheck.label = "fla";
-			_flaCheck.x = padding + 0;
-			_flaCheck.y = renderer.height - 19;
-			renderer.addChild(_flaCheck);
-			
-			// SWF status
-			var _swfCheck:Check = new Check();
-			_swfCheck.isSelected = (item.missing && item.missing.indexOf("swf") == -1);// || !item.missing;
-			_swfCheck.label = "swf";
-			_swfCheck.x = padding + 40;
-			_swfCheck.y = _flaCheck.y;
-			renderer.addChild(_swfCheck);
-			*/
-
-			/*
-			const rightButtonLayoutData:AnchorLayoutData = new AnchorLayoutData();
-			rightButtonLayoutData.top = 10;
-			rightButtonLayoutData.left = 10;
-			*/
-			/*
-			const containerLayout:HorizontalLayout = new HorizontalLayout();
-			//containerLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_RIGHT;
-			containerLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
-			containerLayout.gap = 20 * this.dpiScale;
-			containerLayout.padding = 8;
-
-			var _radioContainer:ScrollContainer = new ScrollContainer();
-			//_radioContainer.layoutData = rightButtonLayoutData;
-			_radioContainer.layout = containerLayout;
-			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-			renderer.addChild(_radioContainer);
-
-			var logButton:Button = new Button;
-			logButton.label = "log";
-			_radioContainer.addChild(logButton);
-
-			var previewButton:Button = new Button;
-			previewButton.label = "preview";
-			_radioContainer.addChild(previewButton);
-
-			_radioContainer.x = actualWidth - 64;
-			*/
-
-			// TODO : dynamic accessory
-
-			return renderer;
-		}
-
 		public function addAssets(path:String, flumpItems:Vector.<FlumpItem>):void
 		{
 			// update import path
@@ -222,7 +153,6 @@ package com.sleepydesign.flumpy.screens
 			// watch for update
 			//assetItemData.invalidateSignal.add(onAssetItemDataUpdate);
 			assetItemData.updateSignal.add(onAssetItemDataUpdate);
-			
 		}
 		
 		/*
@@ -239,8 +169,26 @@ package com.sleepydesign.flumpy.screens
 			_assetItemDataObject["accessory"] = assetItemDataObject["accessory"];
 			_assetList.dataProvider.updateItemAt(index);
 			
+			// show 1st item
+			if(index == 0)
+				showItemAt(0);
+		}
+		
+		private function showItemAt(index:int):void
+		{
 			// tell AnimationScrren that item is ready to show
-			assetItemUpdatedSignal.dispatch(ExportHelper.getLibraryAt(index));
+			var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(ExportHelper.getLibraryAt(index));
+			
+			if(actionItemDatas.length > 0)
+			{
+				DetailScreen.currentScreenID = DetailScreen.ANIMATION_SCREEN;
+				
+				// animations is hot
+				assetItemUpdatedSignal.dispatch(actionItemDatas);
+			}else{
+				// no animation? bad item!
+				DetailScreen.currentScreenID = DetailScreen.LOGS_SCREEN;
+			}
 		}
 		
 		override protected function draw():void

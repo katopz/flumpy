@@ -4,27 +4,26 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.core.MovieCreator;
 	import com.threerings.text.TextFieldUtil;
-	
-	import flash.display.DisplayObject;
+
 	import flash.display.Sprite;
+	import flash.geom.Rectangle;
 	import flash.text.TextField;
-	
+
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
-	import feathers.controls.ProgressBar;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.controls.Slider;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-	
+
 	import flump.export.Atlas;
 	import flump.export.AtlasUtil;
 	import flump.export.TexturePacker;
 	import flump.xfl.XflLibrary;
-	
+
 	import starling.display.Sprite;
 	import starling.events.Event;
 
@@ -107,7 +106,7 @@ package com.sleepydesign.flumpy.screens
 			_headerContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
 			// scale
-			
+
 			var scaleLabel:Label = new Label();
 			scaleLabel.text = "Scale";
 			_headerContainer.addChild(scaleLabel);
@@ -166,32 +165,44 @@ package com.sleepydesign.flumpy.screens
 
 		override protected function draw():void
 		{
-			const currentWidth:int = actualWidth - 320;
+			_currentWidth = actualWidth - 320;
 
-			_header.width = currentWidth;
+			_header.width = _currentWidth;
 			_header.height = 32;
 			_header.validate();
 
-			_footer.width = currentWidth;
+			_footer.width = _currentWidth;
 			_footer.height = 32;
 			_footer.validate();
 
 			_container.y = _header.height;
-			_container.width = currentWidth;
+			_container.width = _currentWidth;
 			_container.height = actualHeight - _header.height - _footer.height;
 
 			_container.validate();
 
-			_body.width = currentWidth;
+			_body.width = _currentWidth;
 			_body.height = _container.height;
 			_body.validate();
 
 			// TODO : responsive to movie container size, test with bella
 			if (_movieContainer)
 			{
-				_movieContainer.x = currentWidth * .5;
+				_movieContainer.x = _currentWidth * .5;
 				_movieContainer.y = 32 * 3 + _container.height * .5;
 			}
+
+			// for preview atlas texture
+			_atlasCanvas.x = 350;
+			_atlasCanvas.y = _container.y + 32 * 2;
+
+			// bg TODO : custom bg
+			_atlasCanvas.graphics.clear();
+			_atlasCanvas.graphics.beginFill(0xFFFFFF, .5);
+			_atlasCanvas.graphics.drawRect(0, 0, _currentWidth, _container.height);
+			_atlasCanvas.graphics.endFill();
+
+			//_atlasCanvas.scrollRect = new Rectangle(0, 0, _currentWidth, _container.height);
 		}
 
 		private function testButton_triggeredHandler(event:Event):void
@@ -200,34 +211,47 @@ package com.sleepydesign.flumpy.screens
 			updateAtlas(ExportHelper.getLibraryAt(0));
 		}
 
-		protected function updateAtlas(_lib:XflLibrary):void
+		private const _atlasCanvas:flash.display.Sprite = new flash.display.Sprite();
+
+		private var _currentWidth:int = 610;
+
+		protected function updateAtlas(lib:XflLibrary):void
 		{
 			const scale:Number = 1;
-			const atlases:Vector.<Atlas> = TexturePacker.withLib(_lib).baseScale(scale).createAtlases();
+			const atlases:Vector.<Atlas> = TexturePacker.withLib(lib).baseScale(scale).createAtlases();
 
-			const sprite:flash.display.Sprite = new flash.display.Sprite();
-			for (var ii:int = 0; ii < atlases.length; ++ii)
+			for (var i:int = 0; i < 1; ++i)
 			{
-				var atlas:Atlas = atlases[ii];
+				var atlas:Atlas = atlases[i];
 				var atlasSprite:flash.display.Sprite = AtlasUtil.toSprite(atlas);
 				var w:int = atlasSprite.width;
 				var h:int = atlasSprite.height;
 
 				// atlas info
-				var tf:TextField = TextFieldUtil.newBuilder().text("Atlas " + ii + ": " + int(w) + "x" + int(h)).color(0x0).autoSizeCenter().build();
+				var tf:TextField = TextFieldUtil.newBuilder().text("Atlas " + i + ": " + int(w) + "x" + int(h)).color(0x0).autoSizeCenter().build();
 
 				tf.x = 2;
-				tf.y = sprite.height;
-				sprite.addChild(tf);
+				tf.y = _atlasCanvas.height;
+				_atlasCanvas.addChild(tf);
 
 				// border
 				atlasSprite.graphics.lineStyle(1, 0x0000ff);
 				atlasSprite.graphics.drawRect(0, 0, w, h);
-				atlasSprite.y = sprite.height;
-				sprite.addChild(atlasSprite);
+				atlasSprite.graphics.endFill();
+				
+				_atlasCanvas.addChild(atlasSprite);
 			}
+
+			FlumpyApp.stage2d.addChild(_atlasCanvas);
+		}
+		
+		override protected function onRemoved():void
+		{
+			// has something to remove
+			if(_atlasCanvas.numChildren > 0)
+				_atlasCanvas.removeChildAt(0);
 			
-			FlumpyApp.stage2d.addChild(sprite);
+			FlumpyApp.stage2d.removeChild(_atlasCanvas);
 		}
 	}
 }

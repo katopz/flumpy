@@ -338,6 +338,14 @@ package feathers.controls
 		/**
 		 * @private
 		 */
+		protected function onRemoved():void
+		{
+			// override me
+		}
+		
+		/**
+		 * @private
+		 */
 		protected function screen_resizeHandler(event:Event):void
 		{
 			this.refreshPixelScale();

@@ -1,8 +1,8 @@
 package com.sleepydesign.flumpy.screens
 {
 	import com.sleepydesign.flumpy.core.AnimationHelper;
-	import com.sleepydesign.flumpy.data.ActionItemData;
-	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
+	import com.sleepydesign.flumpy.model.ActionItemData;
+	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
 	
 	import feathers.controls.Header;
 	import feathers.controls.Label;
@@ -16,8 +16,6 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-	
-	import flump.xfl.XflLibrary;
 	
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -111,14 +109,12 @@ package com.sleepydesign.flumpy.screens
 			act(List(event.target).selectedItem.text);
 		}
 		
-		private function initAction(lib:XflLibrary):void
+		private function initAction(actionItemDatas:Vector.<ActionItemData>):void
 		{
 			trace(" ! initAction will do only once");
 			
 			if(!_actionList.dataProvider)
 				_actionList.dataProvider = new ListCollection;
-
-			var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(lib);
 
 			for each (var actionItemData:ActionItemData in actionItemDatas)
 			{

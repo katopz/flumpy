@@ -52,35 +52,35 @@ package com.sleepydesign.flumpy
 			_starling = new Starling(Main, stage);
 			_starling.enableErrorChecking = false;
 			_starling.start();
-			this.stage.addEventListener(Event.RESIZE, stage_resizeHandler, false, int.MAX_VALUE, true);
-			this.stage.addEventListener(Event.DEACTIVATE, stage_deactivateHandler, false, 0, true);
+			stage.addEventListener(Event.RESIZE, stage_resizeHandler, false, int.MAX_VALUE, true);
+			stage.addEventListener(Event.DEACTIVATE, stage_deactivateHandler, false, 0, true);
 		}
 		
 		private function stage_resizeHandler(event:Event):void
 		{
-			this._starling.stage.stageWidth = this.stage.stageWidth;
-			this._starling.stage.stageHeight = this.stage.stageHeight;
+			_starling.stage.stageWidth = stage.stageWidth;
+			_starling.stage.stageHeight = stage.stageHeight;
 			
-			const viewPort:Rectangle = this._starling.viewPort;
-			viewPort.width = this.stage.stageWidth;
-			viewPort.height = this.stage.stageHeight;
+			const viewPort:Rectangle = _starling.viewPort;
+			viewPort.width = stage.stageWidth;
+			viewPort.height = stage.stageHeight;
 			try
 			{
-				this._starling.viewPort = viewPort;
+				_starling.viewPort = viewPort;
 			}
 			catch(error:Error) {}
 		}
 		
 		private function stage_deactivateHandler(event:Event):void
 		{
-			this._starling.stop();
-			this.stage.addEventListener(Event.ACTIVATE, stage_activateHandler, false, 0, true);
+			_starling.stop();
+			stage.addEventListener(Event.ACTIVATE, stage_activateHandler, false, 0, true);
 		}
 		
 		private function stage_activateHandler(event:Event):void
 		{
-			this.stage.removeEventListener(Event.ACTIVATE, stage_activateHandler);
-			this._starling.start();
+			stage.removeEventListener(Event.ACTIVATE, stage_activateHandler);
+			_starling.start();
 		}
 	}
 }

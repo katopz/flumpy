@@ -1,6 +1,6 @@
 package com.sleepydesign.flumpy.core
 {
-	import com.sleepydesign.flumpy.data.ActionItemData;
+	import com.sleepydesign.flumpy.model.ActionItemData;
 	
 	import flash.geom.Rectangle;
 	

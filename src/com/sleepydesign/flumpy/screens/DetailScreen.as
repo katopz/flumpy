@@ -1,6 +1,6 @@
 package com.sleepydesign.flumpy.screens
 {
-	import com.sleepydesign.flumpy.data.VerticalLayoutSettings;
+	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
 	
 	import feathers.controls.Button;
 	import feathers.controls.Label;
@@ -26,7 +26,7 @@ package com.sleepydesign.flumpy.screens
 		}
 
 		private var _backButton:Button;
-		private var _tabBar:TabBar;
+		private static var _tabBar:TabBar;
 		private var _label:Label;
 
 		protected function initializeHandler(event:Event):void
@@ -39,7 +39,7 @@ package com.sleepydesign.flumpy.screens
 			
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
 			
-			_navigator.addScreen(ANIMATION, new ScreenNavigatorItem(AnimationScreen,
+			_navigator.addScreen(ANIMATION_SCREEN, new ScreenNavigatorItem(AnimationScreen,
 				{
 					//complete: VERTICAL
 				},
@@ -47,12 +47,12 @@ package com.sleepydesign.flumpy.screens
 					settings: verticalLayoutSettings
 				}));
 			
-			_navigator.addScreen(ATLAS, new ScreenNavigatorItem(AtlasScreen,
+			_navigator.addScreen(ATLAS_SCREEN, new ScreenNavigatorItem(AtlasScreen,
 				{
 					//complete: VERTICAL
 				}));
 			
-			_navigator.addScreen(LOGS, new ScreenNavigatorItem(LogsScreen,
+			_navigator.addScreen(LOGS_SCREEN, new ScreenNavigatorItem(LogsScreen,
 				{
 					//complete: VERTICAL
 				}));
@@ -66,20 +66,20 @@ package com.sleepydesign.flumpy.screens
 			_tabBar = new TabBar();
 			_tabBar.dataProvider = new ListCollection(
 				[
-					{ label: ANIMATION },
-					{ label: ATLAS },
-					{ label: LOGS }
+					{ label: ANIMATION_SCREEN },
+					{ label: ATLAS_SCREEN },
+					{ label: LOGS_SCREEN }
 				]);
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
 			_tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
 		}
 		
-		private static const ANIMATION:String = "Animation";
-		private static const ATLAS:String = "Atlas";
-		private static const LOGS:String = "Logs";
+		public static const ANIMATION_SCREEN:String = "Animation";
+		public static const ATLAS_SCREEN:String = "Atlas";
+		public static const LOGS_SCREEN:String = "Logs";
 		
-		private var _navigator:ScreenNavigator;
+		private static var _navigator:ScreenNavigator;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 
 		private function tabBar_changeHandler(event:Event):void
@@ -87,11 +87,17 @@ package com.sleepydesign.flumpy.screens
 			//_label.text = "selectedIndex: " + _tabBar.selectedIndex.toString();
 			//headerProperties.title = TabBar(event.target).selectedItem.label;
 			//invalidate();
-			var tabBar:TabBar = event.target as TabBar;
+			const tabBar:TabBar = event.target as TabBar;
 			const screenName:String = tabBar.selectedItem.label;
 			_transitionManager.clearStack();
 			_transitionManager.skipNextTransition = true;
 			_navigator.showScreen(screenName);
+		}
+		
+		public static function set currentScreenID(screenID:String):void
+		{
+			const screens:Vector.<String> = _navigator.getScreenIDs();
+			_tabBar.selectedIndex = screens.indexOf(screenID);
 		}
 	}
 }

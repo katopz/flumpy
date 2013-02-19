@@ -1,4 +1,4 @@
-package com.sleepydesign.flumpy.data
+package com.sleepydesign.flumpy.model
 {
 	import feathers.controls.Label;
 	

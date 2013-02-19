@@ -1,15 +1,14 @@
 package com.sleepydesign.flumpy
 {
-	import com.sleepydesign.flumpy.screens.MainMenuScreen;
+	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.flumpy.screens.DetailScreen;
+	import com.sleepydesign.flumpy.screens.MainMenuScreen;
 	import com.sleepydesign.flumpy.themes.GrayScaleTheme;
 	
-	import feathers.controls.ScreenNavigator;
 	import feathers.controls.ScreenNavigatorItem;
 	import feathers.controls.ScrollContainer;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
-	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
 	import feathers.system.DeviceCapabilities;
 	
 	import starling.core.Starling;
@@ -36,9 +35,8 @@ package com.sleepydesign.flumpy
 
 		private var _theme:GrayScaleTheme;
 		private var _container:ScrollContainer;
-		private var _navigator:ScreenNavigator;
+		
 		private var _menu:MainMenuScreen;
-		private var _transitionManager:ScreenSlidingStackTransitionManager;
 
 		private function layoutForTablet():void
 		{
@@ -50,15 +48,7 @@ package com.sleepydesign.flumpy
 		{
 			_theme = new GrayScaleTheme();
 
-			_navigator = new ScreenNavigator();
-
-			_navigator.addScreen(PREVIEW_SCREEN, new ScreenNavigatorItem(DetailScreen,
-				{
-					complete: MAIN_MENU
-				}));
-
-			_transitionManager = new ScreenSlidingStackTransitionManager(_navigator);
-			_transitionManager.duration = 0.4;
+			FlumpAppModel.navigator.addScreen(PREVIEW_SCREEN, new ScreenNavigatorItem(DetailScreen));
 
 			if(DeviceCapabilities.isTablet(Starling.current.nativeStage))
 			{
@@ -83,28 +73,28 @@ package com.sleepydesign.flumpy
 				_menu.layoutData = menuLayoutData;
 				_container.addChild(_menu);
 
-				_navigator.clipContent = true;
+				FlumpAppModel.navigator.clipContent = true;
 				const navigatorLayoutData:AnchorLayoutData = new AnchorLayoutData();
 				navigatorLayoutData.top = 0;
 				navigatorLayoutData.right = 0;
 				navigatorLayoutData.bottom = 0;
 				navigatorLayoutData.leftAnchorDisplayObject = _menu;
 				navigatorLayoutData.left = 0;
-				_navigator.layoutData = navigatorLayoutData;
-				_container.addChild(_navigator);
+				FlumpAppModel.navigator.layoutData = navigatorLayoutData;
+				_container.addChild(FlumpAppModel.navigator);
 
 				layoutForTablet();
 			}
 			else
 			{
-				_navigator.addScreen(MAIN_MENU, new ScreenNavigatorItem(MainMenuScreen, MAIN_MENU_EVENTS));
+				FlumpAppModel.navigator.addScreen(MAIN_MENU, new ScreenNavigatorItem(MainMenuScreen, MAIN_MENU_EVENTS));
 
-				addChild(_navigator);
+				addChild(FlumpAppModel.navigator);
 
-				_navigator.showScreen(MAIN_MENU);
+				FlumpAppModel.navigator.showScreen(MAIN_MENU);
 			}
 			
-			_navigator.showScreen(PREVIEW_SCREEN);
+			FlumpAppModel.navigator.showScreen(PREVIEW_SCREEN);
 		}
 
 		private function removedFromStageHandler(event:Event):void
@@ -122,7 +112,7 @@ package com.sleepydesign.flumpy
 			//make sense to transition or keep a history
 			_transitionManager.clearStack();
 			_transitionManager.skipNextTransition = true;
-			_navigator.showScreen(screenName);
+			FlumpAppModel.navigator.showScreen(screenName);
 			*/
 		}
 
