@@ -5,6 +5,8 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.model.AssetItemData;
 	
+	import flash.filesystem.File;
+	
 	import feathers.controls.Button;
 	import feathers.controls.GroupedList;
 	import feathers.controls.Header;
@@ -31,6 +33,11 @@ package com.sleepydesign.flumpy.screens
 		private var _ioList:List;
 		private var _assetList:List;
 		
+		public function get seletedActionItemDatas():Vector.<ActionItemData>
+		{
+			return AnimationHelper.init(ExportHelper.getLibraryAt(_assetList.selectedIndex));
+		}
+		
 		// inject
 		public static const assetItemUpdatedSignal:Signal = new Signal(Vector.<ActionItemData>);
 
@@ -48,10 +55,7 @@ package com.sleepydesign.flumpy.screens
 			_importButton.addEventListener(Event.TRIGGERED, function importButton_triggeredHandler(event:Event):void
 			{
 				// browse via desktop
-				flumpy.importFolder().whenSuccess(function(... args):void
-				{
-					ExportHelper.setImportDirectory(args[0]);
-				});
+				flumpy.importFolder().whenSuccess(ExportHelper.setImportDirectory);
 			});
 			
 			var _exportButton:Button = new Button();
@@ -141,6 +145,7 @@ package com.sleepydesign.flumpy.screens
 			// not choose output folder just yet 
 			if(String(_ioList.dataProvider.getItemAt(1).text).indexOf("Please") == 0)
 			{
+				// set export folder as import folder
 				ExportHelper.exportDirectory(ExportHelper.importDirectory);
 				
 				// update export path default to import path

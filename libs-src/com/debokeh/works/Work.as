@@ -20,15 +20,57 @@ package com.debokeh.works
 		{
 		}
 		
-		// callback ---------------------------------------------------------------------------------------------
+		// referrer ---------------------------------------------------------------------------------------------
 		
-		public var onSuccess:Function;
+		private var _somewhere:Object;
 		
-		public function whenSuccess(callback:Function):IWork
+		public function at(somewhere:Object):IWork
 		{
-			onSuccess = callback;
+			_somewhere = somewhere;
 			
 			return this;
+		}
+		
+		// callback ---------------------------------------------------------------------------------------------
+		
+		private var _onSuccess:Function;
+
+		public function success(...args):Work
+		{
+			if(_onSuccess is Function)
+				 _onSuccess.apply(this, args);
+				
+			return this;
+		}
+
+		public function whenSuccess(callback:Function):IWork
+		{
+			_onSuccess = callback;
+			
+			return this;
+		}
+		
+		// release ---------------------------------------------------------------------------------------------
+		
+		public function dispose():IWork
+		{
+			// callback
+			_onSuccess = null;
+			
+			// referrer
+			_somewhere = null;
+			
+			return this;
+		}
+		
+		// renew ---------------------------------------------------------------------------------------------
+		
+		public static function renew(_work:Work):Work
+		{
+			if(_work)
+				_work.dispose();
+				
+			return _work = new Work;
 		}
 	}
 }

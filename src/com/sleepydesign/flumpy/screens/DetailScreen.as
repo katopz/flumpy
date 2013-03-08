@@ -3,6 +3,7 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.core.AnimationHelper;
 	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.model.ActionItemData;
+	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
 	
 	import feathers.controls.Button;
@@ -21,7 +22,7 @@ package com.sleepydesign.flumpy.screens
 	
 	import starling.events.Event;
 
-	[Event(name="complete",type="starling.events.Event")]
+	[Event(name = "complete", type = "starling.events.Event")]
 
 	public class DetailScreen extends PanelScreen
 	{
@@ -29,7 +30,7 @@ package com.sleepydesign.flumpy.screens
 		public static const initializedSignal:Signal = new Signal(DetailScreen);
 		
 		private static var _this:DetailScreen;
-		
+
 		public function DetailScreen()
 		{
 			_this = this;
@@ -43,59 +44,49 @@ package com.sleepydesign.flumpy.screens
 		protected function initializeHandler(event:Event):void
 		{
 			layout = new AnchorLayout();
-			
+
 			headerProperties.title = "Preview";
 
 			_navigator = new ScreenNavigator();
-			
+
 			const verticalLayoutSettings:VerticalLayoutSettings = new VerticalLayoutSettings();
-			
-			_navigator.addScreen(ANIMATION_SCREEN, new ScreenNavigatorItem(AnimationScreen,
-				{
-					//complete: VERTICAL
-				},
-				{
-					settings: verticalLayoutSettings
-				}));
-			
-			_navigator.addScreen(ATLAS_SCREEN, new ScreenNavigatorItem(AtlasScreen,
-				{
-					//complete: VERTICAL
-				}));
-			
-			_navigator.addScreen(LOGS_SCREEN, new ScreenNavigatorItem(LogsScreen,
-				{
-					//complete: VERTICAL
-				}));
-			
+
+			_navigator.addScreen(ANIMATION_SCREEN, new ScreenNavigatorItem(AnimationScreen, {
+				//complete: VERTICAL
+				}, {settings: verticalLayoutSettings}));
+
+
+			_navigator.addScreen(ATLAS_SCREEN, new ScreenNavigatorItem(AtlasScreen));
+
+			_navigator.addScreen(LOGS_SCREEN, new ScreenNavigatorItem(LogsScreen));
+
 			_transitionManager = new ScreenSlidingStackTransitionManager(_navigator);
 			_transitionManager.duration = 0.4;
-			
+
 			addChild(_navigator);
 			//_navigator.showScreen(VERTICAL);
-			
+
 			_tabBar = new TabBar();
-			_tabBar.dataProvider = new ListCollection(
-				[
-					{ label: ANIMATION_SCREEN },
-					{ label: ATLAS_SCREEN },
-					{ label: LOGS_SCREEN }
-				]);
+			_tabBar.dataProvider = new ListCollection([{label: ANIMATION_SCREEN}, {label: ATLAS_SCREEN}, {label: LOGS_SCREEN}]);
 			_tabBar.addEventListener(Event.CHANGE, tabBar_changeHandler);
 			_tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
-			
+
 			currentScreenID = LOGS_SCREEN;
 		}
-		
+
 		public static const ANIMATION_SCREEN:String = "Animation";
 		public static const ATLAS_SCREEN:String = "Atlas";
 		public static const LOGS_SCREEN:String = "Logs";
-		
+
 		public static const _SCREENS:Vector.<String> = Vector.<String>([ANIMATION_SCREEN, ATLAS_SCREEN, LOGS_SCREEN]);
-		
+
 		private static var _navigator:ScreenNavigator;
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
+
+		private static var _currentAssetIndex:int;
+
+		private static var _actionItemDatas:Vector.<ActionItemData>;
 
 		private function tabBar_changeHandler(event:Event):void
 		{
@@ -103,35 +94,80 @@ package com.sleepydesign.flumpy.screens
 			//headerProperties.title = TabBar(event.target).selectedItem.label;
 			//invalidate();
 			const tabBar:TabBar = event.target as TabBar;
-			const screenName:String = tabBar.selectedItem.label;
+			const screenID:String = tabBar.selectedItem.label;
+
 			_transitionManager.clearStack();
 			_transitionManager.skipNextTransition = true;
-			_navigator.showScreen(screenName);
+
+			// bind initial
+			whenScreenInitialized(screenID);
+
+			// show view
+			_navigator.showScreen(screenID);
 		}
-		
+
+		private function whenScreenInitialized(screenID:String):void
+		{
+			switch (screenID)
+			{
+				case ANIMATION_SCREEN:
+
+					//var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(ExportHelper.getLibraryAt(screenIndex));
+
+					AnimationScreen.initializedSignal.add(function(animationScreen:AnimationScreen):void
+					{
+						// injection 
+						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
+						
+						// push data to view
+						//animationScreen.showActionItemDatas(actionItemDatas);
+					});
+					break;
+				case ATLAS_SCREEN:
+					
+					AtlasScreen.initializedSignal.add(function(atlasScreen:AtlasScreen):void
+					{
+						// injection 
+						FlumpAppModel.requestShowAtlasSignal.dispatch(ExportHelper.getLibraryAt(_currentAssetIndex));
+						
+						// push data to view
+						//animationScreen.showActionItemDatas(actionItemDatas);
+					});
+					break;
+			}
+		}
+
 		public static function set currentScreenID(screenID:String):void
 		{
-			const selectedIndex:int = _SCREENS.indexOf(screenID);
-			
-			if(_tabBar.selectedIndex == selectedIndex)
+			const screenIndex:int = _SCREENS.indexOf(screenID);
+
+			if (_tabBar.selectedIndex == screenIndex)
 				return;
-				
-			_tabBar.selectedIndex = selectedIndex;
+
+			_tabBar.selectedIndex = screenIndex;
 		}
 		
+		public static function get currentScreenID():String
+		{
+			return _SCREENS[_tabBar.selectedIndex];
+		}
+
 		public static function showItemAt(index:int):void
 		{
-			// tell AnimationScrren that item is ready to show
-			var actionItemDatas:Vector.<ActionItemData> = AnimationHelper.init(ExportHelper.getLibraryAt(index));
+			// store for later use after view init
+			_currentAssetIndex = index;
 			
-			if(actionItemDatas.length > 0)
+			// store for later use after view init
+			_actionItemDatas = AnimationHelper.init(ExportHelper.getLibraryAt(index));
+
+			// has something to show
+			if (_actionItemDatas.length > 0)
 			{
-				AnimationScreen.initializedSignal.add(function(animationScreen:AnimationScreen):void {
-					animationScreen.showActionItemDatas(actionItemDatas);
-					
-				});
-				
-				currentScreenID = ANIMATION_SCREEN;
+				// auto display animation screen if on log screen
+				if(currentScreenID == LOGS_SCREEN)
+					currentScreenID = ANIMATION_SCREEN;
+				else
+					FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
 				
 				/*
 				DetailScreen.setCurrentScreenID(DetailScreen.ANIMATION_SCREEN, function ():void{
@@ -139,20 +175,22 @@ package com.sleepydesign.flumpy.screens
 				assetItemUpdatedSignal.dispatch(actionItemDatas);
 				});
 				*/
-			}else{
+			}
+			else
+			{
 				// no animation? bad item!
 				currentScreenID = LOGS_SCREEN;
 			}
 		}
-		
-		/*
-		public static function setCurrentScreenID(screenID:String, callback:Function = null):void
-		{
-			currentScreenID = screenID;
-			
-			if(callback is Function)
-				callback();
-		}
-		*/
+
+	/*
+	public static function setCurrentScreenID(screenID:String, callback:Function = null):void
+	{
+		currentScreenID = screenID;
+
+		if(callback is Function)
+			callback();
+	}
+	*/
 	}
 }

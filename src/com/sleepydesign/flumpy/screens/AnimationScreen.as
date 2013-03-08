@@ -2,6 +2,7 @@ package com.sleepydesign.flumpy.screens
 {
 	import com.sleepydesign.flumpy.core.AnimationHelper;
 	import com.sleepydesign.flumpy.model.ActionItemData;
+	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
 	
 	import feathers.controls.Header;
@@ -45,9 +46,19 @@ package com.sleepydesign.flumpy.screens
 			// footer
 			initFooter();
 			
+			// mediator
+			initMediator();
+			
+			// ready to roll
 			initializedSignal.dispatch(this);
 		}
-
+		
+		private function initMediator():void
+		{
+			// injected
+			FlumpAppModel.requestShowAnimationSignal.add(showActionItemDatas);
+		}
+		
 		// layout -----------------------------------------------------------------------
 
 		private var _container:ScrollContainer;
@@ -210,6 +221,9 @@ package com.sleepydesign.flumpy.screens
 		
 		public function showActionItemDatas(actionItemDatas:Vector.<ActionItemData>):void
 		{
+			if(actionItemDatas.length <= 0)
+				return;
+			
 			trace(" ! initAction will do only once");
 			
 			if(!_actionList.dataProvider)
@@ -228,10 +242,12 @@ package com.sleepydesign.flumpy.screens
 			//act(actionItemDatas[0].movie);
 		}
 		
+		/*
 		private function list_changeHandler(event:Event):void
 		{
 			var list:List = event.target as List;
 			DetailScreen.showItemAt(list.selectedIndex);
 		}
+		*/
 	}
 }

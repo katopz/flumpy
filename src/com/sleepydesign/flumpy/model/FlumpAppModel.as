@@ -2,6 +2,10 @@ package com.sleepydesign.flumpy.model
 {
 	import feathers.controls.ScreenNavigator;
 	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
+	
+	import flump.xfl.XflLibrary;
+	
+	import org.osflash.signals.Signal;
 
 	public class FlumpAppModel
 	{
@@ -20,6 +24,16 @@ package com.sleepydesign.flumpy.model
 			_transitionManager = new ScreenSlidingStackTransitionManager(FlumpAppModel.navigator);
 			_transitionManager.duration = 0.4;
 		}
+		
+		//TODO : return AssetItemData
+		public static function get currentSeletedItem():AssetItemData
+		{
+			return null;
+		}
+		
+		// mediator.update
+		public static const requestShowAnimationSignal:Signal = new Signal(Vector.<ActionItemData>);
+		public static const requestShowAtlasSignal:Signal = new Signal(XflLibrary);
 	}
 }
 com.sleepydesign.flumpy.model.FlumpAppModel.init();

@@ -9,7 +9,7 @@ package com.debokeh.io
 
 	public class WFile
 	{
-		private static const _work: Work = new Work;
+		private static var _work: Work;
 		
 		// native ---------------------------------------------------------------------------------------------
 		
@@ -28,7 +28,14 @@ package com.debokeh.io
 					eventHandler(event);
 				
 				if (event.type == Event.SELECT)
-					_handler(event);
+				{
+					// handler
+					_work.success(event.target);
+					
+					// release
+					_work.dispose();
+					_work = null;
+				}
 				
 				// release
 				directory = null;
@@ -44,25 +51,13 @@ package com.debokeh.io
 			return directory;
 		}
 		
-		private static function _handler(event:Event):void
-		{
-			var file:File = File(event.target);
-			
-			// handler
-			if(_work.onSuccess is Function)
-				_work.onSuccess(file);
-			
-			// release
-			file = null;
-		}
-		
 		// work ---------------------------------------------------------------------------------------------
 		
 		public static function browseForDirectory(title:String = "Select folder.", eventHandler:Function = null):IWork
 		{
 			_browseForDirectory(title, eventHandler);
 			
-			return _work;
+			return _work = Work.renew(_work);
 		}
 	}
 }

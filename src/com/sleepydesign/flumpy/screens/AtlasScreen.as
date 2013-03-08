@@ -3,12 +3,14 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.FlumpyApp;
 	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.core.MovieCreator;
+	import com.sleepydesign.flumpy.model.FlumpAppModel;
+	import com.sleepydesign.system.DebugUtil;
 	import com.threerings.text.TextFieldUtil;
-
+	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
-
+	
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
@@ -18,12 +20,14 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-
+	
 	import flump.export.Atlas;
 	import flump.export.AtlasUtil;
 	import flump.export.TexturePacker;
 	import flump.xfl.XflLibrary;
-
+	
+	import org.osflash.signals.Signal;
+	
 	import starling.display.Sprite;
 	import starling.events.Event;
 
@@ -31,6 +35,9 @@ package com.sleepydesign.flumpy.screens
 
 	public class AtlasScreen extends Screen
 	{
+		// mediator.startup
+		public static const initializedSignal:Signal = new Signal(AtlasScreen);
+		
 		override protected function initialize():void
 		{
 			// layout
@@ -44,8 +51,20 @@ package com.sleepydesign.flumpy.screens
 
 			// header
 			initHeader();
+			
+			// mediator
+			initMediator();
+			
+			// ready to roll
+			initializedSignal.dispatch(this);
 		}
-
+		
+		private function initMediator():void
+		{
+			// injected
+			FlumpAppModel.requestShowAtlasSignal.add(showAtlas);
+		}
+		
 		// layout -----------------------------------------------------------------------
 
 		private var _container:ScrollContainer;
@@ -72,11 +91,6 @@ package com.sleepydesign.flumpy.screens
 			_body.layout = radioLayout;
 			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
-
-			var btn:Button = new Button;
-			btn.label = "test"
-			_body.addChild(btn);
-			btn.addEventListener(Event.TRIGGERED, testButton_triggeredHandler);
 
 			_movieContainer = new starling.display.Sprite;
 			addChild(_movieContainer);
@@ -205,21 +219,21 @@ package com.sleepydesign.flumpy.screens
 			//_atlasCanvas.scrollRect = new Rectangle(0, 0, _currentWidth, _container.height);
 		}
 
-		private function testButton_triggeredHandler(event:Event):void
-		{
-			// TODO : preview selected index
-			updateAtlas(ExportHelper.getLibraryAt(0));
-		}
-
 		private const _atlasCanvas:flash.display.Sprite = new flash.display.Sprite();
 
 		private var _currentWidth:int = 610;
 
-		protected function updateAtlas(lib:XflLibrary):void
+		protected function showAtlas(lib:XflLibrary):void
 		{
 			const scale:Number = 1;
 			const atlases:Vector.<Atlas> = TexturePacker.withLib(lib).baseScale(scale).createAtlases();
 
+			if(!atlases || atlases.length <= 0)
+			{
+				DebugUtil.trace(" ! No atlas found.");
+				return;
+			}
+			
 			for (var i:int = 0; i < 1; ++i)
 			{
 				var atlas:Atlas = atlases[i];

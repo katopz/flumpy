@@ -23,7 +23,7 @@ package com.sleepydesign.flumpy.screens
 			_logList.dataProvider = new ListCollection();
 
 			for each (var parseError:ParseError in ExportHelper.logs)
-				_logList.dataProvider.addItem({text: "[" + parseError.severity + "] " + parseError.message});
+				_logList.dataProvider.addItem({text: "[" + parseError.location + "] " + parseError.severity + " : " + parseError.message});
 
 			_logList.itemRendererProperties.labelField = "text";
 
