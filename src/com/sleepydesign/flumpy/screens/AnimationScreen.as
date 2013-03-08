@@ -1,5 +1,6 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.FlumpyApp;
 	import com.sleepydesign.flumpy.core.AnimationHelper;
 	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
@@ -112,6 +113,9 @@ package com.sleepydesign.flumpy.screens
 			_actionList.dataProvider = new ListCollection;
 			_actionList.itemRendererProperties.labelField = "text";
 			_actionList.addEventListener(starling.events.Event.CHANGE, onSelectActionItem);
+			
+			// visibility
+			_pickerList.visible = _actionList.visible = false;
 
 			// prepare canvas
 			addChild(_movieContainer = new Sprite);
@@ -120,6 +124,8 @@ package com.sleepydesign.flumpy.screens
 		
 		private function onSelectActionItem(event:starling.events.Event):void
 		{
+			trace("onSelectActionItem");
+			
 			// can be -1 then null while reset
 			if(List(event.target).selectedItem)
 				act(List(event.target).selectedItem.text);
@@ -172,17 +178,14 @@ package com.sleepydesign.flumpy.screens
 			_body.height = _container.height;
 			_body.validate();
 
-			_pickerList.x = 10;
 			_pickerList.y = 32 + 4;
 			_pickerList.width = 96;
-			_pickerList.isEnabled = false;
 
-			_actionList.x = 10;
 			_actionList.y = _pickerList.y + 22;
 			_actionList.width = _pickerList.width;
 			_actionList.height = _container.height - 32 - 4 - _actionList.y;
 			_actionList.validate();
-
+			
 			// TODO : responsive to movie container size, must test with bella
 			if (_movieContainer)
 			{
@@ -199,13 +202,21 @@ package com.sleepydesign.flumpy.screens
 		public function showActionItemDatas(actionItemDatas:Vector.<ActionItemData>):void
 		{
 			if(!actionItemDatas || actionItemDatas.length <= 0)
+			{
+				// visibility
+				_pickerList.visible = _actionList.visible = false;
+				
 				return;
+			}
+			
+			// visibility
+			_pickerList.visible = _actionList.visible = true;
 			
 			// remove old stuff
 			if(_actionList.dataProvider)
 			{
 				_actionList.dataProvider.removeAll();
-				_actionList.selectedIndex = -1;
+				_actionList.dataProvider = new ListCollection;
 			}
 			
 			trace(" ! actionItemDatas : " + actionItemDatas.length);
@@ -213,8 +224,20 @@ package com.sleepydesign.flumpy.screens
 			for each (var actionItemData:ActionItemData in actionItemDatas)
 				_actionList.dataProvider.push(actionItemData.toObject());
 			
+			// reset selectedIndex to -1;
+			_actionList.deselect();
+			
 			// auto show first movie
 			_actionList.selectedIndex = 0;
+		}
+		
+		override public function dispose():void
+		{
+			trace(" ! "  + this + ".dispose");
+			
+			FlumpAppModel.requestShowAnimationSignal.remove(showActionItemDatas);
+			
+			super.dispose();
 		}
 	}
 }

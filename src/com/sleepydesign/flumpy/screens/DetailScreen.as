@@ -43,10 +43,18 @@ package com.sleepydesign.flumpy.screens
 			initHeader();
 
 			// default screen
-			currentScreenID = ANIMATION_SCREEN;
+			//currentScreenID = ANIMATION_SCREEN;
+			
+			// mediator
+			initMediator();
 
 			// ready to roll
 			initializedSignal.dispatch(this);
+		}
+		
+		private function initMediator():void
+		{
+			
 		}
 
 		// layout -----------------------------------------------------------------------
@@ -80,6 +88,8 @@ package com.sleepydesign.flumpy.screens
 			addChild(_tabBar);
 		}
 
+		public static const tabChangeSignal:Signal = new Signal(/*tabID*/String);
+		
 		public static const ANIMATION_SCREEN:String = "Animation";
 		public static const ATLAS_SCREEN:String = "Atlas";
 		public static const LOGS_SCREEN:String = "Logs";
@@ -111,6 +121,8 @@ package com.sleepydesign.flumpy.screens
 
 			// show view
 			_navigator.showScreen(screenID);
+			
+			tabChangeSignal.dispatch(screenID);
 		}
 
 		private function whenScreenInitialized(screenID:String):void
@@ -119,7 +131,7 @@ package com.sleepydesign.flumpy.screens
 			{
 				case ANIMATION_SCREEN:
 
-					AnimationScreen.initializedSignal.add(function(animationScreen:AnimationScreen):void
+					AnimationScreen.initializedSignal.addOnce(function(animationScreen:AnimationScreen):void
 					{
 						// injection 
 						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
@@ -127,7 +139,7 @@ package com.sleepydesign.flumpy.screens
 					break;
 				case ATLAS_SCREEN:
 
-					AtlasScreen.initializedSignal.add(function(atlasScreen:AtlasScreen):void
+					AtlasScreen.initializedSignal.addOnce(function(atlasScreen:AtlasScreen):void
 					{
 						// injection 
 						FlumpAppModel.requestShowAtlasSignal.dispatch(ExportHelper.getLibraryAt(_currentAssetIndex));
@@ -135,7 +147,7 @@ package com.sleepydesign.flumpy.screens
 					break;
 				case LOGS_SCREEN:
 
-					LogsScreen.initializedSignal.add(function(logsScreen:LogsScreen):void
+					LogsScreen.initializedSignal.addOnce(function(logsScreen:LogsScreen):void
 					{
 						if (!ExportHelper.logs || ExportHelper.logs.length <= 0)
 							return;

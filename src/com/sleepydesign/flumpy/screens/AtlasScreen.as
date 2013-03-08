@@ -35,7 +35,7 @@ package com.sleepydesign.flumpy.screens
 	{
 		// mediator.startup
 		public static const initializedSignal:Signal = new Signal(AtlasScreen);
-		
+
 		override protected function initialize():void
 		{
 			// layout
@@ -49,20 +49,19 @@ package com.sleepydesign.flumpy.screens
 
 			// header
 			initHeader();
-			
+
 			// mediator
 			initMediator();
-			
+
 			// ready to roll
 			initializedSignal.dispatch(this);
 		}
-		
+
 		private function initMediator():void
 		{
-			// injected
 			FlumpAppModel.requestShowAtlasSignal.add(showAtlas);
 		}
-		
+
 		// layout -----------------------------------------------------------------------
 
 		private var _container:ScrollContainer;
@@ -164,10 +163,12 @@ package com.sleepydesign.flumpy.screens
 			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
+			// TODO : update from real data
 			var _radio1:Label = new Label();
 			_radio1.text = "Memory used : 100KB";
 			_radioContainer.addChild(_radio1);
 
+			// TODO : update from real data
 			var _radio2:Label = new Label();
 			_radio2.text = "Atlas Wasted : 66.67%";
 			_radioContainer.addChild(_radio2);
@@ -209,35 +210,43 @@ package com.sleepydesign.flumpy.screens
 			_atlasCanvas.y = _container.y + 32 * 2;
 
 			// bg TODO : custom bg
+			/*
 			_atlasCanvas.graphics.clear();
 			_atlasCanvas.graphics.beginFill(0xFFFFFF, .5);
-			_atlasCanvas.graphics.drawRect(0, 0, _currentWidth, _container.height);
+			_atlasCanvas.graphics.drawRect(0, 0, _currentWidth, _container.height - _atlasCanvas.y);
 			_atlasCanvas.graphics.endFill();
+			*/
 
 			//_atlasCanvas.scrollRect = new Rectangle(0, 0, _currentWidth, _container.height);
 		}
 
-		private const _atlasCanvas:flash.display.Sprite = new flash.display.Sprite();
+		private var _atlasCanvas:flash.display.Sprite = new flash.display.Sprite();
 
 		private var _currentWidth:int = 610;
 
 		protected function showAtlas(lib:XflLibrary):void
 		{
-			const scale:Number = 1;
-			const atlases:Vector.<Atlas> = TexturePacker.withLib(lib).baseScale(scale).createAtlases();
+			DebugUtil.trace(" * showAtlas : " + lib.location);
 
-			if(!atlases || atlases.length <= 0)
+			clear();
+
+			const scale:Number = 1;
+			var atlases:Vector.<Atlas> = TexturePacker.withLib(lib).baseScale(scale).createAtlases();
+
+			if (!atlases || atlases.length <= 0)
 			{
 				DebugUtil.trace(" ! No atlas found.");
 				return;
 			}
-			
+
 			for (var i:int = 0; i < atlases.length; ++i)
 			{
 				var atlas:Atlas = atlases[i];
 				var atlasSprite:flash.display.Sprite = AtlasUtil.toSprite(atlas);
 				var w:int = atlasSprite.width;
 				var h:int = atlasSprite.height;
+
+				atlasSprite.y = _atlasCanvas.height;
 
 				// atlas info
 				var tf:TextField = TextFieldUtil.newBuilder().text("Atlas " + i + ": " + int(w) + "x" + int(h)).color(0x0).autoSizeCenter().build();
@@ -250,20 +259,36 @@ package com.sleepydesign.flumpy.screens
 				atlasSprite.graphics.lineStyle(1, 0x0000ff);
 				atlasSprite.graphics.drawRect(0, 0, w, h);
 				atlasSprite.graphics.endFill();
-				
+
 				_atlasCanvas.addChild(atlasSprite);
 			}
 
+			// TODO : scroll
 			FlumpyApp.stage2d.addChild(_atlasCanvas);
 		}
-		
-		override protected function onRemoved():void
+
+		public function clear():void
 		{
-			// has something to remove
-			if(_atlasCanvas.numChildren > 0)
-				_atlasCanvas.removeChildAt(0);
-			
-			FlumpyApp.stage2d.removeChild(_atlasCanvas);
+			if (_atlasCanvas)
+			{
+				_atlasCanvas.removeChildren();
+				//_atlasCanvas.graphics.clear();
+
+				if (_atlasCanvas.parent)
+					_atlasCanvas.parent.removeChild(_atlasCanvas);
+			}
+		}
+
+		override public function dispose():void
+		{
+			trace(" ! " + this + ".dispose");
+
+			FlumpAppModel.requestShowAtlasSignal.remove(showAtlas);
+
+			clear();
+			_atlasCanvas = null;
+
+			super.dispose();
 		}
 	}
 }

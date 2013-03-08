@@ -254,6 +254,11 @@ package feathers.controls
 			this.dispatchEventWith(Event.CHANGE);
 		}
 		
+		public function deselect():void
+		{
+			this._selectedIndex = -1;
+		}
+		
 		/**
 		 * The currently selected item. Returns null if no item is selected.
 		 */

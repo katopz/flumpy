@@ -29,7 +29,6 @@ package com.sleepydesign.flumpy.model
 		// mediator.update
 		public static const requestShowAnimationSignal:Signal = new Signal(Vector.<ActionItemData>);
 		public static const requestShowAtlasSignal:Signal = new Signal(XflLibrary);
-		
 		public static const requestShowLogsSignal:Signal = new Signal(String, Vector.<ParseError>);
 	}
 }
