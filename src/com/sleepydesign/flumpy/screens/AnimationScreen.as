@@ -126,27 +126,6 @@ package com.sleepydesign.flumpy.screens
 		{
 			act(List(event.target).selectedItem.text);
 		}
-		
-		/*
-		private function initAction(actionItemDatas:Vector.<ActionItemData>):void
-		{
-			trace(" ! initAction will do only once");
-			
-			if(!_actionList.dataProvider)
-			_actionList.dataProvider = new ListCollection;
-			
-			trace(" ! actionItemDatas : " + actionItemDatas);
-			
-			for each (var actionItemData:ActionItemData in actionItemDatas)
-			{
-			//trace("actionItemData.movie : " + actionItemData.movie);
-			_actionList.dataProvider.push(actionItemData.toObject());
-			}
-			
-			// auto show first movie
-			act(actionItemDatas[0].movie);
-		}
-		*/
 
 		// footer -----------------------------------------------------------------------
 
@@ -221,7 +200,7 @@ package com.sleepydesign.flumpy.screens
 		
 		public function showActionItemDatas(actionItemDatas:Vector.<ActionItemData>):void
 		{
-			if(actionItemDatas.length <= 0)
+			if(!actionItemDatas || actionItemDatas.length <= 0)
 				return;
 			
 			trace(" ! initAction will do only once");
@@ -229,25 +208,13 @@ package com.sleepydesign.flumpy.screens
 			if(!_actionList.dataProvider)
 				_actionList.dataProvider = new ListCollection;
 			
-			trace(" ! actionItemDatas : " + actionItemDatas);
+			trace(" ! actionItemDatas : " + actionItemDatas.length);
 			
 			for each (var actionItemData:ActionItemData in actionItemDatas)
-			{
-				//trace("actionItemData.movie : " + actionItemData.movie);
 				_actionList.dataProvider.push(actionItemData.toObject());
-			}
 			
 			// auto show first movie
 			_actionList.selectedIndex = 0;
-			//act(actionItemDatas[0].movie);
 		}
-		
-		/*
-		private function list_changeHandler(event:Event):void
-		{
-			var list:List = event.target as List;
-			DetailScreen.showItemAt(list.selectedIndex);
-		}
-		*/
 	}
 }

@@ -72,7 +72,7 @@ package com.sleepydesign.flumpy.screens
 			_tabBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
 			addChild(_tabBar);
 
-			currentScreenID = LOGS_SCREEN;
+			currentScreenID = ANIMATION_SCREEN;
 		}
 
 		public static const ANIMATION_SCREEN:String = "Animation";
@@ -85,6 +85,12 @@ package com.sleepydesign.flumpy.screens
 		private var _transitionManager:ScreenSlidingStackTransitionManager;
 
 		private static var _currentAssetIndex:int;
+		private static var _currentAssetID:String;
+
+		public static function get currentAssetID():String
+		{
+			return ExportHelper.getLibraryAt(_currentAssetIndex).location;
+		}
 
 		private static var _actionItemDatas:Vector.<ActionItemData>;
 
@@ -134,6 +140,20 @@ package com.sleepydesign.flumpy.screens
 						//animationScreen.showActionItemDatas(actionItemDatas);
 					});
 					break;
+				case LOGS_SCREEN:
+					
+					LogsScreen.initializedSignal.add(function(logsScreen:LogsScreen):void
+					{
+						if(!ExportHelper.logs || ExportHelper.logs.length <= 0)
+							return;
+						
+						// injection 
+						FlumpAppModel.requestShowLogsSignal.dispatch(currentAssetID, ExportHelper.logs);
+						
+						// push data to view
+						//animationScreen.showActionItemDatas(actionItemDatas);
+					});
+					break;
 			}
 		}
 
@@ -160,6 +180,20 @@ package com.sleepydesign.flumpy.screens
 			// store for later use after view init
 			_actionItemDatas = AnimationHelper.init(ExportHelper.getLibraryAt(index));
 
+			switch (currentScreenID)
+			{
+				case ANIMATION_SCREEN:
+					FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
+					break;
+				case ATLAS_SCREEN:
+					FlumpAppModel.requestShowAtlasSignal.dispatch(ExportHelper.getLibraryAt(_currentAssetIndex));
+					break;
+				case LOGS_SCREEN:
+					FlumpAppModel.requestShowLogsSignal.dispatch(currentAssetID, ExportHelper.logs);
+					break;
+			}
+			
+			/*
 			// has something to show
 			if (_actionItemDatas.length > 0)
 			{
@@ -168,29 +202,12 @@ package com.sleepydesign.flumpy.screens
 					currentScreenID = ANIMATION_SCREEN;
 				else
 					FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
-				
-				/*
-				DetailScreen.setCurrentScreenID(DetailScreen.ANIMATION_SCREEN, function ():void{
-				// animations is hot
-				assetItemUpdatedSignal.dispatch(actionItemDatas);
-				});
-				*/
 			}
 			else
 			{
-				// no animation? bad item!
 				currentScreenID = LOGS_SCREEN;
 			}
+			*/
 		}
-
-	/*
-	public static function setCurrentScreenID(screenID:String, callback:Function = null):void
-	{
-		currentScreenID = screenID;
-
-		if(callback is Function)
-			callback();
-	}
-	*/
 	}
 }

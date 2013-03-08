@@ -3,6 +3,7 @@ package com.sleepydesign.flumpy.model
 	import feathers.controls.ScreenNavigator;
 	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
 	
+	import flump.xfl.ParseError;
 	import flump.xfl.XflLibrary;
 	
 	import org.osflash.signals.Signal;
@@ -25,15 +26,11 @@ package com.sleepydesign.flumpy.model
 			_transitionManager.duration = 0.4;
 		}
 		
-		//TODO : return AssetItemData
-		public static function get currentSeletedItem():AssetItemData
-		{
-			return null;
-		}
-		
 		// mediator.update
 		public static const requestShowAnimationSignal:Signal = new Signal(Vector.<ActionItemData>);
 		public static const requestShowAtlasSignal:Signal = new Signal(XflLibrary);
+		
+		public static const requestShowLogsSignal:Signal = new Signal(String, Vector.<ParseError>);
 	}
 }
 com.sleepydesign.flumpy.model.FlumpAppModel.init();

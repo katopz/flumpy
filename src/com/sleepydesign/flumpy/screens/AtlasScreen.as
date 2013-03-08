@@ -234,7 +234,7 @@ package com.sleepydesign.flumpy.screens
 				return;
 			}
 			
-			for (var i:int = 0; i < 1; ++i)
+			for (var i:int = 0; i < atlases.length; ++i)
 			{
 				var atlas:Atlas = atlases[i];
 				var atlasSprite:flash.display.Sprite = AtlasUtil.toSprite(atlas);
