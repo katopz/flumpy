@@ -1,14 +1,12 @@
 package com.sleepydesign.flumpy.screens
 {
 	import com.sleepydesign.flumpy.FlumpyApp;
-	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.core.MovieCreator;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.system.DebugUtil;
 	import com.threerings.text.TextFieldUtil;
 	
 	import flash.display.Sprite;
-	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	
 	import feathers.controls.Button;
