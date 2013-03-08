@@ -183,7 +183,12 @@ package com.sleepydesign.flumpy.screens
 			switch (currentScreenID)
 			{
 				case ANIMATION_SCREEN:
-					FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
+					if (!_actionItemDatas || _actionItemDatas.length <= 0)
+					{
+						currentScreenID = LOGS_SCREEN;
+					} else {
+						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
+					}
 					break;
 				case ATLAS_SCREEN:
 					FlumpAppModel.requestShowAtlasSignal.dispatch(ExportHelper.getLibraryAt(_currentAssetIndex));
