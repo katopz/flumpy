@@ -109,22 +109,20 @@ package com.sleepydesign.flumpy.screens
 				return renderer;
 			}
 
-			//_actionList.dataProvider = new ListCollection([{text: "walk"}]);
-
+			_actionList.dataProvider = new ListCollection;
 			_actionList.itemRendererProperties.labelField = "text";
 			_actionList.addEventListener(starling.events.Event.CHANGE, onSelectActionItem);
 
 			// prepare canvas
 			addChild(_movieContainer = new Sprite);
 			AnimationHelper.initContainer(_movieContainer);
-
-			// monitor for first valid item to show in AnimationScrren
-			//MainMenuScreen.assetItemUpdatedSignal.addOnce(initAction);
 		}
 		
 		private function onSelectActionItem(event:starling.events.Event):void
 		{
-			act(List(event.target).selectedItem.text);
+			// can be -1 then null while reset
+			if(List(event.target).selectedItem)
+				act(List(event.target).selectedItem.text);
 		}
 
 		// footer -----------------------------------------------------------------------
@@ -203,10 +201,12 @@ package com.sleepydesign.flumpy.screens
 			if(!actionItemDatas || actionItemDatas.length <= 0)
 				return;
 			
-			trace(" ! initAction will do only once");
-			
-			if(!_actionList.dataProvider)
-				_actionList.dataProvider = new ListCollection;
+			// remove old stuff
+			if(_actionList.dataProvider)
+			{
+				_actionList.dataProvider.removeAll();
+				_actionList.selectedIndex = -1;
+			}
 			
 			trace(" ! actionItemDatas : " + actionItemDatas.length);
 			
