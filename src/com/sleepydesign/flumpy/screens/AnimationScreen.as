@@ -1,11 +1,10 @@
 package com.sleepydesign.flumpy.screens
 {
-	import com.sleepydesign.flumpy.FlumpyApp;
 	import com.sleepydesign.flumpy.core.AnimationHelper;
 	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
-	
+
 	import feathers.controls.Header;
 	import feathers.controls.Label;
 	import feathers.controls.List;
@@ -18,9 +17,9 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-	
+
 	import org.osflash.signals.Signal;
-	
+
 	import starling.display.Sprite;
 	import starling.events.Event;
 
@@ -30,7 +29,7 @@ package com.sleepydesign.flumpy.screens
 	{
 		// mediator.startup
 		public static const initializedSignal:Signal = new Signal(AnimationScreen);
-		
+
 		public var settings:VerticalLayoutSettings;
 
 		override protected function initialize():void
@@ -46,20 +45,20 @@ package com.sleepydesign.flumpy.screens
 
 			// footer
 			initFooter();
-			
+
 			// mediator
 			initMediator();
-			
+
 			// ready to roll
 			initializedSignal.dispatch(this);
 		}
-		
+
 		private function initMediator():void
 		{
 			// injected
 			FlumpAppModel.requestShowAnimationSignal.add(showActionItemDatas);
 		}
-		
+
 		// layout -----------------------------------------------------------------------
 
 		private var _container:ScrollContainer;
@@ -90,7 +89,7 @@ package com.sleepydesign.flumpy.screens
 		}
 
 		// actions -----------------------------------------------------------------------
-		
+
 		private var _pickerList:PickerList;
 		private var _actionList:List;
 
@@ -113,7 +112,7 @@ package com.sleepydesign.flumpy.screens
 			_actionList.dataProvider = new ListCollection;
 			_actionList.itemRendererProperties.labelField = "text";
 			_actionList.addEventListener(starling.events.Event.CHANGE, onSelectActionItem);
-			
+
 			// visibility
 			_pickerList.visible = _actionList.visible = false;
 
@@ -121,19 +120,21 @@ package com.sleepydesign.flumpy.screens
 			addChild(_movieContainer = new Sprite);
 			AnimationHelper.initContainer(_movieContainer);
 		}
-		
+
 		private function onSelectActionItem(event:starling.events.Event):void
 		{
 			trace("onSelectActionItem");
-			
+
 			// can be -1 then null while reset
-			if(List(event.target).selectedItem)
+			if (List(event.target).selectedItem)
 				act(List(event.target).selectedItem.text);
 		}
 
 		// footer -----------------------------------------------------------------------
 
 		private var _footer:Header;
+		private var _footer_radio1:Label;
+		private var _footer_radio2:Label;
 
 		private function initFooter():void
 		{
@@ -151,15 +152,16 @@ package com.sleepydesign.flumpy.screens
 			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
-			var _radio1:Label = new Label();
-			_radio1.text = "Memory used : 100KB";
-			_radioContainer.addChild(_radio1);
-
-			var _radio2:Label = new Label();
-			_radio2.text = "Atlas Wasted : 66.67%";
-			_radioContainer.addChild(_radio2);
+			_radioContainer.addChild(_footer_radio1 = new Label);
+			_radioContainer.addChild(_footer_radio2 = new Label);
 
 			_footer.addChild(_radioContainer);
+		}
+
+		public function updateStatusBar(totalMemory:Number, totalPercentSize:Number):void
+		{
+			_footer_radio1.text = "Memory used : " + formatThousand((totalMemory / 1000).toPrecision(4)) + "KB";
+			_footer_radio2.text = "Atlas Wasted : " + Number(totalPercentSize * 100).toPrecision(4) + "%";
 		}
 
 		override protected function draw():void
@@ -185,7 +187,7 @@ package com.sleepydesign.flumpy.screens
 			_actionList.width = _pickerList.width;
 			_actionList.height = _container.height - 32 - 4 - _actionList.y;
 			_actionList.validate();
-			
+
 			// TODO : responsive to movie container size, must test with bella
 			if (_movieContainer)
 			{
@@ -198,45 +200,53 @@ package com.sleepydesign.flumpy.screens
 		{
 			AnimationHelper.displayLibraryItem(action);
 		}
-		
-		public function showActionItemDatas(actionItemDatas:Vector.<ActionItemData>):void
+
+		public function showActionItemDatas(actionItemDatas:Vector.<ActionItemData>, totalMemory:Number, totalPercentSize:Number):void
 		{
-			if(!actionItemDatas || actionItemDatas.length <= 0)
+			if (!actionItemDatas || actionItemDatas.length <= 0)
 			{
 				// visibility
 				_pickerList.visible = _actionList.visible = false;
-				
+
 				return;
 			}
-			
+
 			// visibility
 			_pickerList.visible = _actionList.visible = true;
-			
+
 			// remove old stuff
-			if(_actionList.dataProvider)
+			if (_actionList.dataProvider)
 			{
 				_actionList.dataProvider.removeAll();
 				_actionList.dataProvider = new ListCollection;
 			}
-			
+
 			trace(" ! actionItemDatas : " + actionItemDatas.length);
-			
+
 			for each (var actionItemData:ActionItemData in actionItemDatas)
 				_actionList.dataProvider.push(actionItemData.toObject());
-			
+
 			// reset selectedIndex to -1;
 			_actionList.deselect();
-			
+
 			// auto show first movie
 			_actionList.selectedIndex = 0;
+
+			// update footer
+			updateStatusBar(totalMemory, totalPercentSize);
 		}
-		
+
+		private function formatThousand(source:String):String
+		{
+			return source.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,");
+		}
+
 		override public function dispose():void
 		{
-			trace(" ! "  + this + ".dispose");
-			
+			trace(" ! " + this + ".dispose");
+
 			FlumpAppModel.requestShowAnimationSignal.remove(showActionItemDatas);
-			
+
 			super.dispose();
 		}
 	}

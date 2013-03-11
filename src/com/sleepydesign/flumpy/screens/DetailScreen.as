@@ -4,6 +4,7 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
+	import com.sleepydesign.flumpy.model.TextureAtlasData;
 	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
 
 	import feathers.controls.Button;
@@ -17,6 +18,8 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.motion.transitions.ScreenSlidingStackTransitionManager;
+
+	import flump.xfl.XflLibrary;
 
 	import org.osflash.signals.Signal;
 
@@ -44,17 +47,17 @@ package com.sleepydesign.flumpy.screens
 
 			// default screen
 			//currentScreenID = ANIMATION_SCREEN;
-			
+
 			// mediator
 			initMediator();
 
 			// ready to roll
 			initializedSignal.dispatch(this);
 		}
-		
+
 		private function initMediator():void
 		{
-			
+
 		}
 
 		// layout -----------------------------------------------------------------------
@@ -88,8 +91,8 @@ package com.sleepydesign.flumpy.screens
 			addChild(_tabBar);
 		}
 
-		public static const tabChangeSignal:Signal = new Signal(/*tabID*/String);
-		
+		public static const tabChangeSignal:Signal = new Signal( /*tabID*/String);
+
 		public static const ANIMATION_SCREEN:String = "Animation";
 		public static const ATLAS_SCREEN:String = "Atlas";
 		public static const LOGS_SCREEN:String = "Logs";
@@ -121,12 +124,19 @@ package com.sleepydesign.flumpy.screens
 
 			// show view
 			_navigator.showScreen(screenID);
-			
+
 			tabChangeSignal.dispatch(screenID);
 		}
 
 		private function whenScreenInitialized(screenID:String):void
 		{
+			var lib:XflLibrary = ExportHelper.getLibraryAt(_currentAssetIndex);
+
+			if (!lib)
+				return;
+
+			var textureAtlasData:TextureAtlasData = AnimationHelper.getTextureAtlasData(lib);
+
 			switch (screenID)
 			{
 				case ANIMATION_SCREEN:
@@ -134,7 +144,7 @@ package com.sleepydesign.flumpy.screens
 					AnimationScreen.initializedSignal.addOnce(function(animationScreen:AnimationScreen):void
 					{
 						// injection 
-						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
+						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas, textureAtlasData.totalMemory, textureAtlasData.totalPercentSize);
 					});
 					break;
 				case ATLAS_SCREEN:
@@ -142,7 +152,7 @@ package com.sleepydesign.flumpy.screens
 					AtlasScreen.initializedSignal.addOnce(function(atlasScreen:AtlasScreen):void
 					{
 						// injection 
-						FlumpAppModel.requestShowAtlasSignal.dispatch(ExportHelper.getLibraryAt(_currentAssetIndex));
+						FlumpAppModel.requestShowAtlasSignal.dispatch(lib, textureAtlasData);
 					});
 					break;
 				case LOGS_SCREEN:
@@ -179,8 +189,10 @@ package com.sleepydesign.flumpy.screens
 			// store for later use after view init
 			_currentAssetIndex = index;
 
-			// store for later use after view init
-			_actionItemDatas = AnimationHelper.init(ExportHelper.getLibraryAt(index));
+			// wait for extra info
+			var lib:XflLibrary = ExportHelper.getLibraryAt(index);
+			_actionItemDatas = AnimationHelper.init(lib);
+			var textureAtlasData:TextureAtlasData = AnimationHelper.getTextureAtlasData(lib);
 
 			switch (currentScreenID)
 			{
@@ -191,11 +203,11 @@ package com.sleepydesign.flumpy.screens
 					}
 					else
 					{
-						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas);
+						FlumpAppModel.requestShowAnimationSignal.dispatch(_actionItemDatas, textureAtlasData.totalMemory, textureAtlasData.totalPercentSize);
 					}
 					break;
 				case ATLAS_SCREEN:
-					FlumpAppModel.requestShowAtlasSignal.dispatch(ExportHelper.getLibraryAt(_currentAssetIndex));
+					FlumpAppModel.requestShowAtlasSignal.dispatch(lib, textureAtlasData);
 					break;
 				case LOGS_SCREEN:
 					FlumpAppModel.requestShowLogsSignal.dispatch(currentAssetID, ExportHelper.logs);

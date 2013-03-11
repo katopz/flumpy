@@ -3,12 +3,13 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.FlumpyApp;
 	import com.sleepydesign.flumpy.core.MovieCreator;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
+	import com.sleepydesign.flumpy.model.TextureAtlasData;
 	import com.sleepydesign.system.DebugUtil;
 	import com.threerings.text.TextFieldUtil;
-	
+
 	import flash.display.Sprite;
 	import flash.text.TextField;
-	
+
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
@@ -18,14 +19,14 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-	
+
 	import flump.export.Atlas;
 	import flump.export.AtlasUtil;
 	import flump.export.TexturePacker;
 	import flump.xfl.XflLibrary;
-	
+
 	import org.osflash.signals.Signal;
-	
+
 	import starling.display.Sprite;
 	import starling.events.Event;
 
@@ -210,12 +211,12 @@ package com.sleepydesign.flumpy.screens
 			_atlasCanvas.y = _container.y + 32 * 2;
 
 			// bg TODO : custom bg
-			/*
-			_atlasCanvas.graphics.clear();
-			_atlasCanvas.graphics.beginFill(0xFFFFFF, .5);
-			_atlasCanvas.graphics.drawRect(0, 0, _currentWidth, _container.height - _atlasCanvas.y);
-			_atlasCanvas.graphics.endFill();
-			*/
+		/*
+		_atlasCanvas.graphics.clear();
+		_atlasCanvas.graphics.beginFill(0xFFFFFF, .5);
+		_atlasCanvas.graphics.drawRect(0, 0, _currentWidth, _container.height - _atlasCanvas.y);
+		_atlasCanvas.graphics.endFill();
+		*/
 
 			//_atlasCanvas.scrollRect = new Rectangle(0, 0, _currentWidth, _container.height);
 		}
@@ -224,7 +225,7 @@ package com.sleepydesign.flumpy.screens
 
 		private var _currentWidth:int = 610;
 
-		protected function showAtlas(lib:XflLibrary):void
+		protected function showAtlas(lib:XflLibrary, textureAtlasData:TextureAtlasData):void
 		{
 			DebugUtil.trace(" * showAtlas : " + lib.location);
 

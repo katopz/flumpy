@@ -55,8 +55,8 @@ package com.sleepydesign.flumpy.core
 			if (!_importChooserFile)
 			{
 				_importChooserFile = file; //, file.nativePath, file.nativePath);
-				//todo : select export path
-				//_exportChooserFile = file; //, file.nativePath, file.nativePath);
+					//todo : select export path
+					//_exportChooserFile = file; //, file.nativePath, file.nativePath);
 			}
 
 			_setImportDirectory(file);
@@ -64,9 +64,11 @@ package com.sleepydesign.flumpy.core
 			return _this;
 		}
 
-		// TODO select from item
 		public static function getLibraryAt(index:int):XflLibrary
 		{
+			if (!_flashDocsGrid_dataProvider)
+				return null;
+
 			return _flashDocsGrid_dataProvider[index].lib;
 		}
 
@@ -84,12 +86,12 @@ package com.sleepydesign.flumpy.core
 
 		// targets
 		private static var _importDirectory:File;
-		
+
 		public static function get importDirectory():File
 		{
 			return _importDirectory;
 		}
-		
+
 		private static var _exportChooserFile:File;
 		private static var _importChooserFile:File;
 
@@ -106,6 +108,7 @@ package com.sleepydesign.flumpy.core
 		private static var _conf:ProjectConf = new ProjectConf();
 		private static var _confFile:File;
 		private static var _projectDirty:Boolean; // true if project has unsaved changes
+
 		//public static var importDirectory:File;
 
 		private static function _setImportDirectory(dir:File):void
@@ -228,9 +231,9 @@ package com.sleepydesign.flumpy.core
 		private static function createPublisher():Publisher
 		{
 			// TOFIX : this is dependency bad practise, publisher shouldn't be call until export phase
-			if(!_exportChooserFile)
+			if (!_exportChooserFile)
 				return null;
-			
+
 			return new Publisher(_exportChooserFile, _conf);
 		}
 
@@ -263,11 +266,11 @@ package com.sleepydesign.flumpy.core
 			stage.quality = prevQuality;
 			status.updateModified(Ternary.FALSE);
 		}
-		
+
 		public static function export():void
 		{
 			trace(" * export");
-			
+
 			for each (var status:FlumpItem in _flashDocsGrid_dataProvider)
 				if (status.isValid)
 					exportFlashDocument(status);
