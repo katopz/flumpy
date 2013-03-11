@@ -4,7 +4,9 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.core.MovieCreator;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.flumpy.model.TextureAtlasData;
+	import com.sleepydesign.flumpy.model.TextureAtlasItemData;
 	import com.sleepydesign.system.DebugUtil;
+	import com.sleepydesign.utils.StringUtil;
 	import com.threerings.text.TextFieldUtil;
 
 	import flash.display.Sprite;
@@ -13,9 +15,14 @@ package com.sleepydesign.flumpy.screens
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
+	import feathers.controls.List;
+	import feathers.controls.PickerList;
 	import feathers.controls.Screen;
 	import feathers.controls.ScrollContainer;
 	import feathers.controls.Slider;
+	import feathers.controls.renderers.DefaultListItemRenderer;
+	import feathers.controls.renderers.IListItemRenderer;
+	import feathers.data.ListCollection;
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
@@ -44,6 +51,9 @@ package com.sleepydesign.flumpy.screens
 
 			// body
 			initBody();
+
+			// texture picker
+			initTextureList();
 
 			// footer
 			initFooter();
@@ -83,10 +93,10 @@ package com.sleepydesign.flumpy.screens
 		{
 			_container.addChild(_body = new ScrollContainer());
 
-			const radioLayout:HorizontalLayout = new HorizontalLayout();
-			radioLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
-			radioLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
-			_body.layout = radioLayout;
+			const bodyLayout:HorizontalLayout = new HorizontalLayout();
+			bodyLayout.horizontalAlign = HorizontalLayout.HORIZONTAL_ALIGN_CENTER;
+			bodyLayout.verticalAlign = HorizontalLayout.VERTICAL_ALIGN_MIDDLE;
+			_body.layout = bodyLayout;
 			_body.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_body.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
@@ -118,8 +128,8 @@ package com.sleepydesign.flumpy.screens
 			_headerContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
 			// scale
-
 			var scaleLabel:Label = new Label();
+			scaleLabel.x = 200;
 			scaleLabel.text = "Scale";
 			_headerContainer.addChild(scaleLabel);
 
@@ -144,9 +154,92 @@ package com.sleepydesign.flumpy.screens
 			_header.addChild(_headerContainer);
 		}
 
+		// actions -----------------------------------------------------------------------
+
+		private var _pickerList:PickerList;
+		private var _textureList:List;
+
+		private function initTextureList():void
+		{
+			_pickerList = new PickerList();
+			_pickerList.prompt = "Texture";
+			addChild(_pickerList);
+
+			// accessory
+			var memoryLabel:Label = new Label;
+			memoryLabel.text = "1KB";
+
+			addChild(_textureList = new List);
+			_textureList.itemRendererFactory = function():IListItemRenderer
+			{
+				const renderer:DefaultListItemRenderer = new DefaultListItemRenderer();
+				renderer.labelField = "label";
+				renderer.height = 20;
+
+				return renderer;
+			}
+
+			_textureList.dataProvider = new ListCollection();
+			_textureList.itemRendererProperties.labelField = "text";
+			_textureList.addEventListener(starling.events.Event.CHANGE, onSelectTextureItem);
+
+			// visibility
+			_pickerList.visible = _textureList.visible = false;
+		}
+
+		public function showTextureDetail(textureAtlasData:TextureAtlasData):void
+		{
+			if (!textureAtlasData || textureAtlasData.textureItems.length <= 0)
+			{
+				// visibility
+				_pickerList.visible = _textureList.visible = false;
+
+				return;
+			}
+
+			// visibility
+			_pickerList.visible = _textureList.visible = true;
+
+			// remove old stuff
+			if (_textureList.dataProvider)
+			{
+				_textureList.dataProvider.removeAll();
+				_textureList.dataProvider = new ListCollection;
+			}
+
+			trace(" ! textureAtlasData : " + textureAtlasData.textureItems.length);
+
+			for each (var textureAtlasItemData:TextureAtlasItemData in textureAtlasData.textureItems)
+			{
+				var textureAtlasItemObject:Object = {text: textureAtlasItemData.id};
+				var accessoryLabel:Label = new Label;
+				accessoryLabel.text = StringUtil.formatThousand(Math.ceil(textureAtlasItemData.memory / 1000).toString()) + "KB";
+
+				textureAtlasItemObject.accessory = accessoryLabel;
+
+				_textureList.dataProvider.push(textureAtlasItemObject);
+			}
+
+			// reset selectedIndex to -1;
+			_textureList.deselect();
+
+			// auto show first movie
+			_textureList.selectedIndex = 0;
+
+			// update footer
+			updateStatusBar(textureAtlasData.totalMemory, textureAtlasData.totalPercentSize);
+		}
+
+		private function onSelectTextureItem(event:starling.events.Event):void
+		{
+			trace(" TODO : onSelectTextureItem -> show selected texture");
+		}
+
 		// footer -----------------------------------------------------------------------
 
 		private var _footer:Header;
+		private var _footer_radio1:Label;
+		private var _footer_radio2:Label;
 
 		private function initFooter():void
 		{
@@ -164,17 +257,16 @@ package com.sleepydesign.flumpy.screens
 			_radioContainer.horizontalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 			_radioContainer.verticalScrollPolicy = ScrollContainer.SCROLL_POLICY_OFF;
 
-			// TODO : update from real data
-			var _radio1:Label = new Label();
-			_radio1.text = "Memory used : 100KB";
-			_radioContainer.addChild(_radio1);
-
-			// TODO : update from real data
-			var _radio2:Label = new Label();
-			_radio2.text = "Atlas Wasted : 66.67%";
-			_radioContainer.addChild(_radio2);
+			_radioContainer.addChild(_footer_radio1 = new Label);
+			_radioContainer.addChild(_footer_radio2 = new Label);
 
 			_footer.addChild(_radioContainer);
+		}
+
+		public function updateStatusBar(totalMemory:Number, totalPercentSize:Number):void
+		{
+			_footer_radio1.text = "Memory used : " + StringUtil.formatThousand((totalMemory / 1000).toPrecision(4)) + "KB";
+			_footer_radio2.text = "Atlas Wasted : " + Number(totalPercentSize * 100).toPrecision(4) + "%";
 		}
 
 		override protected function draw():void
@@ -199,6 +291,14 @@ package com.sleepydesign.flumpy.screens
 			_body.height = _container.height;
 			_body.validate();
 
+			_pickerList.y = 32 + 4;
+			_pickerList.width = 200;
+
+			_textureList.y = _pickerList.y + 22;
+			_textureList.width = _pickerList.width;
+			_textureList.height = _container.height - _textureList.y;
+			_textureList.validate();
+
 			// TODO : responsive to movie container size, test with bella
 			if (_movieContainer)
 			{
@@ -207,7 +307,7 @@ package com.sleepydesign.flumpy.screens
 			}
 
 			// for preview atlas texture
-			_atlasCanvas.x = 350;
+			_atlasCanvas.x = 350 + _pickerList.width;
 			_atlasCanvas.y = _container.y + 32 * 2;
 
 			// bg TODO : custom bg
@@ -266,6 +366,9 @@ package com.sleepydesign.flumpy.screens
 
 			// TODO : scroll
 			FlumpyApp.stage2d.addChild(_atlasCanvas);
+
+			// show texture detail
+			showTextureDetail(textureAtlasData);
 		}
 
 		public function clear():void

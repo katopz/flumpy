@@ -4,6 +4,7 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
 	import com.sleepydesign.flumpy.themes.VerticalLayoutSettings;
+	import com.sleepydesign.utils.StringUtil;
 
 	import feathers.controls.Header;
 	import feathers.controls.Label;
@@ -40,7 +41,7 @@ package com.sleepydesign.flumpy.screens
 			// body
 			initBody();
 
-			// actions
+			// actions picker
 			initActions();
 
 			// footer
@@ -160,7 +161,7 @@ package com.sleepydesign.flumpy.screens
 
 		public function updateStatusBar(totalMemory:Number, totalPercentSize:Number):void
 		{
-			_footer_radio1.text = "Memory used : " + formatThousand((totalMemory / 1000).toPrecision(4)) + "KB";
+			_footer_radio1.text = "Memory used : " + StringUtil.formatThousand(Math.ceil(totalMemory / 1000).toString()) + "KB";
 			_footer_radio2.text = "Atlas Wasted : " + Number(totalPercentSize * 100).toPrecision(4) + "%";
 		}
 
@@ -234,11 +235,6 @@ package com.sleepydesign.flumpy.screens
 
 			// update footer
 			updateStatusBar(totalMemory, totalPercentSize);
-		}
-
-		private function formatThousand(source:String):String
-		{
-			return source.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,");
 		}
 
 		override public function dispose():void
