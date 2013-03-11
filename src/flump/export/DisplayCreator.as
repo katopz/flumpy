@@ -6,6 +6,7 @@ package flump.export {
 import com.threerings.util.Map;
 import com.threerings.util.maps.ValueComputingMap;
 
+import flash.geom.Rectangle;
 import flash.utils.Dictionary;
 
 import flump.display.Library;
@@ -25,9 +26,13 @@ import starling.textures.Texture;
 public class DisplayCreator
     implements Library
 {
+	private var _bounds:Dictionary;
+	
     public function DisplayCreator (lib :XflLibrary) {
         _lib = lib;
-
+		
+		_bounds = new Dictionary;
+		
         const atlases :Vector.<Atlas> = TexturePacker.withLib(lib).createAtlases();
         for each (var atlas :Atlas in atlases) {
             var mold :AtlasMold = atlas.toMold();
@@ -38,9 +43,16 @@ public class DisplayCreator
                 var creator :ImageCreator =
                     new ImageCreator(tex, atlasTexture.origin, atlasTexture.symbol);
                 _imageCreators[atlasTexture.symbol] = creator;
+				
+				_bounds[atlasTexture.symbol] = atlasTexture.bounds;
             }
         }
     }
+	
+	public function getBoundByTextureID(textureID:String):Rectangle
+	{
+		return _bounds[textureID];
+	}
 
     public function get imageSymbols () :Vector.<String> {
         // Vector.map can't be used to create a Vector of a new type

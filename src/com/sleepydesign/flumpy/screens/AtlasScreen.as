@@ -10,6 +10,7 @@ package com.sleepydesign.flumpy.screens
 	import com.threerings.text.TextFieldUtil;
 
 	import flash.display.Sprite;
+	import flash.geom.Rectangle;
 	import flash.text.TextField;
 
 	import feathers.controls.Button;
@@ -165,10 +166,6 @@ package com.sleepydesign.flumpy.screens
 			_pickerList.prompt = "Texture";
 			addChild(_pickerList);
 
-			// accessory
-			var memoryLabel:Label = new Label;
-			memoryLabel.text = "1KB";
-
 			addChild(_textureList = new List);
 			_textureList.itemRendererFactory = function():IListItemRenderer
 			{
@@ -211,7 +208,7 @@ package com.sleepydesign.flumpy.screens
 
 			for each (var textureAtlasItemData:TextureAtlasItemData in textureAtlasData.textureItems)
 			{
-				var textureAtlasItemObject:Object = {text: textureAtlasItemData.id};
+				var textureAtlasItemObject:Object = {text: textureAtlasItemData.id, bound: textureAtlasItemData.bound};
 				var accessoryLabel:Label = new Label;
 				accessoryLabel.text = StringUtil.formatThousand(Math.ceil(textureAtlasItemData.memory / 1000).toString()) + "KB";
 
@@ -232,7 +229,18 @@ package com.sleepydesign.flumpy.screens
 
 		private function onSelectTextureItem(event:starling.events.Event):void
 		{
-			trace(" TODO : onSelectTextureItem -> show selected texture");
+			if (!List(event.target).selectedItem)
+				return;
+
+			// bound
+			var bound:Rectangle = List(event.target).selectedItem["bound"];
+			//trace(List(event.target).selectedItem["bound"]);
+
+			_selectionCanvas.graphics.clear();
+			_selectionCanvas.graphics.lineStyle(1, 0xFF0000, 0.5);
+			_selectionCanvas.graphics.beginFill(0xFF0000, 0);
+			_selectionCanvas.graphics.drawRect(350 + _pickerList.width + bound.x,  _container.y + 32 * 2 + bound.y, bound.width, bound.height);
+			_selectionCanvas.graphics.endFill();
 		}
 
 		// footer -----------------------------------------------------------------------
@@ -369,17 +377,31 @@ package com.sleepydesign.flumpy.screens
 
 			// show texture detail
 			showTextureDetail(textureAtlasData);
+
+			FlumpyApp.stage2d.addChild(_selectionCanvas);
 		}
+
+		// selected
+		private var _selectionCanvas:flash.display.Sprite = new flash.display.Sprite();
 
 		public function clear():void
 		{
 			if (_atlasCanvas)
 			{
 				_atlasCanvas.removeChildren();
-				//_atlasCanvas.graphics.clear();
+				_atlasCanvas.graphics.clear();
 
 				if (_atlasCanvas.parent)
 					_atlasCanvas.parent.removeChild(_atlasCanvas);
+			}
+
+			if (_selectionCanvas)
+			{
+				_selectionCanvas.removeChildren();
+				_selectionCanvas.graphics.clear();
+
+				if (_selectionCanvas.parent)
+					_selectionCanvas.parent.removeChild(_selectionCanvas);
 			}
 		}
 

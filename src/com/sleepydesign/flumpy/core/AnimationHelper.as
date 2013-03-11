@@ -62,7 +62,7 @@ package com.sleepydesign.flumpy.core
 			//trace("_controlsWindow_movies_dataProvider: " + _controlsWindow_movies_dataProvider);
 			return _controlsWindow_movies_dataProvider;
 		}
-
+		
 		public static function getTextureAtlasData(lib:XflLibrary, project:ProjectConf = null):TextureAtlasData
 		{
 			var textureItems:Vector.<TextureAtlasItemData> = new Vector.<TextureAtlasItemData>;
@@ -76,7 +76,7 @@ package com.sleepydesign.flumpy.core
 				totalMemory += itemUsage;
 				//_controlsWindow_textures_dataProvider.push({texture: tex.symbol, memory: itemUsage});
 
-				textureItems.push(new TextureAtlasItemData(tex.symbol, itemUsage));
+				textureItems.push(new TextureAtlasItemData(tex.symbol, itemUsage, _creator.getBoundByTextureID(tex.symbol)));
 			}
 
 			trace(" ! totalMemory : " + totalMemory);

@@ -124,8 +124,6 @@ package com.sleepydesign.flumpy.screens
 
 		private function onSelectActionItem(event:starling.events.Event):void
 		{
-			trace("onSelectActionItem");
-
 			// can be -1 then null while reset
 			if (List(event.target).selectedItem)
 				act(List(event.target).selectedItem.text);
