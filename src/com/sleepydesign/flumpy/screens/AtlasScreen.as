@@ -8,11 +8,11 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.system.DebugUtil;
 	import com.sleepydesign.utils.StringUtil;
 	import com.threerings.text.TextFieldUtil;
-
+	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
-
+	
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
@@ -27,14 +27,14 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-
+	
 	import flump.export.Atlas;
 	import flump.export.AtlasUtil;
 	import flump.export.TexturePacker;
 	import flump.xfl.XflLibrary;
-
+	
 	import org.osflash.signals.Signal;
-
+	
 	import starling.display.Sprite;
 	import starling.events.Event;
 
@@ -158,6 +158,8 @@ package com.sleepydesign.flumpy.screens
 		// actions -----------------------------------------------------------------------
 
 		private var _pickerList:PickerList;
+		private const _PICKERLIST_WIDTH:int = 200;
+		
 		private var _textureList:List;
 
 		private function initTextureList():void
@@ -231,18 +233,26 @@ package com.sleepydesign.flumpy.screens
 		{
 			if (!List(event.target).selectedItem)
 				return;
-
+			
+			focusSelectedTexture();
+		}
+		
+		private function focusSelectedTexture():void
+		{
+			if(!_textureList.selectedItem)
+				return;
+			
 			// bound
-			var bound:Rectangle = List(event.target).selectedItem["bound"];
+			var bound:Rectangle = _textureList.selectedItem["bound"];
 			//trace(List(event.target).selectedItem["bound"]);
-
+			
 			_selectionCanvas.graphics.clear();
 			_selectionCanvas.graphics.lineStyle(1, 0xFF0000, 0.5);
 			_selectionCanvas.graphics.beginFill(0xFF0000, 0);
-			_selectionCanvas.graphics.drawRect(350 + _pickerList.width + bound.x,  _container.y + 32 * 2 + bound.y, bound.width, bound.height);
+			_selectionCanvas.graphics.drawRect(350 + _PICKERLIST_WIDTH + bound.x,  _container.y + 32 * 2 + bound.y, bound.width, bound.height);
 			_selectionCanvas.graphics.endFill();
 		}
-
+		
 		// footer -----------------------------------------------------------------------
 
 		private var _footer:Header;
@@ -300,12 +310,14 @@ package com.sleepydesign.flumpy.screens
 			_body.validate();
 
 			_pickerList.y = 32 + 4;
-			_pickerList.width = 200;
+			_pickerList.width = _PICKERLIST_WIDTH;
 
 			_textureList.y = _pickerList.y + 22;
 			_textureList.width = _pickerList.width;
 			_textureList.height = _container.height - _textureList.y;
 			_textureList.validate();
+			
+			focusSelectedTexture();
 
 			// TODO : responsive to movie container size, test with bella
 			if (_movieContainer)
