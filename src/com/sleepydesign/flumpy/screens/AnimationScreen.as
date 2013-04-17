@@ -26,7 +26,7 @@ package com.sleepydesign.flumpy.screens
 
 	[Event(name = "complete", type = "starling.events.Event")]
 
-	public class AnimationScreen extends Screen
+	public class AnimationScreen extends Screen implements IFlumpyScreen
 	{
 		// mediator.startup
 		public static const initializedSignal:Signal = new Signal(AnimationScreen);
@@ -214,19 +214,12 @@ package com.sleepydesign.flumpy.screens
 			_pickerList.visible = _actionList.visible = true;
 
 			// remove old stuff
-			if (_actionList.dataProvider)
-			{
-				_actionList.dataProvider.removeAll();
-				_actionList.dataProvider = new ListCollection;
-			}
+			clearActionList();
 
 			trace(" ! actionItemDatas : " + actionItemDatas.length);
 
 			for each (var actionItemData:ActionItemData in actionItemDatas)
 				_actionList.dataProvider.push(actionItemData.toObject());
-
-			// reset selectedIndex to -1;
-			_actionList.deselect();
 
 			// auto show first movie
 			_actionList.selectedIndex = 0;
@@ -234,6 +227,29 @@ package com.sleepydesign.flumpy.screens
 			// update footer
 			updateStatusBar(totalMemory, totalPercentSize);
 		}
+
+		public function clearActionList():void
+		{
+			if (_actionList.dataProvider)
+				_actionList.dataProvider.removeAll();
+
+			_actionList.dataProvider = new ListCollection;
+
+			// reset selectedIndex to -1;
+			_actionList.deselect();
+		}
+
+		// clear -----------------------------------------------------------------------
+
+		public function clear():void
+		{
+			trace(" ! " + this + ".clear");
+			clearActionList();
+
+			AnimationHelper.clear();
+		}
+
+		// dispose -----------------------------------------------------------------------
 
 		override public function dispose():void
 		{

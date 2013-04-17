@@ -1,5 +1,6 @@
 package com.sleepydesign.flumpy.screens
 {
+	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.model.FlumpAppModel;
 
 	import feathers.controls.List;
@@ -12,7 +13,7 @@ package com.sleepydesign.flumpy.screens
 
 	[Event(name = "complete", type = "starling.events.Event")]
 
-	public class LogsScreen extends Screen
+	public class LogsScreen extends Screen implements IFlumpyScreen
 	{
 		// mediator.startup
 		public static const initializedSignal:Signal = new Signal(LogsScreen);
@@ -49,8 +50,10 @@ package com.sleepydesign.flumpy.screens
 
 		public function showLogs(assetID:String, parseErrors:Vector.<ParseError>):void
 		{
-			if (_logList.dataProvider)
-				_logList.dataProvider.removeAll();
+			if (!parseErrors || parseErrors.length <= 0)
+				return;
+
+			clearLogs();
 
 			for each (var parseError:ParseError in parseErrors)
 			{
@@ -65,6 +68,22 @@ package com.sleepydesign.flumpy.screens
 
 			_logList.width = currentWidth;
 			_logList.height = actualHeight - 32 * 2;
+		}
+
+		private function clearLogs():void
+		{
+			if (_logList.dataProvider)
+				_logList.dataProvider.removeAll();
+
+			_logList.dataProvider = new ListCollection;
+		}
+
+		// clear -----------------------------------------------------------------------
+
+		public function clear():void
+		{
+			trace(" ! " + this + ".clear");
+			clearLogs();
 		}
 	}
 }

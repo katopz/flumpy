@@ -8,11 +8,11 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.system.DebugUtil;
 	import com.sleepydesign.utils.StringUtil;
 	import com.threerings.text.TextFieldUtil;
-	
+
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
-	
+
 	import feathers.controls.Button;
 	import feathers.controls.Header;
 	import feathers.controls.Label;
@@ -27,20 +27,20 @@ package com.sleepydesign.flumpy.screens
 	import feathers.layout.AnchorLayout;
 	import feathers.layout.AnchorLayoutData;
 	import feathers.layout.HorizontalLayout;
-	
+
 	import flump.export.Atlas;
 	import flump.export.AtlasUtil;
 	import flump.export.TexturePacker;
 	import flump.xfl.XflLibrary;
-	
+
 	import org.osflash.signals.Signal;
-	
+
 	import starling.display.Sprite;
 	import starling.events.Event;
 
 	[Event(name = "complete", type = "starling.events.Event")]
 
-	public class AtlasScreen extends Screen
+	public class AtlasScreen extends Screen implements IFlumpyScreen
 	{
 		// mediator.startup
 		public static const initializedSignal:Signal = new Signal(AtlasScreen);
@@ -159,7 +159,7 @@ package com.sleepydesign.flumpy.screens
 
 		private var _pickerList:PickerList;
 		private const _PICKERLIST_WIDTH:int = 200;
-		
+
 		private var _textureList:List;
 
 		private function initTextureList():void
@@ -233,26 +233,26 @@ package com.sleepydesign.flumpy.screens
 		{
 			if (!List(event.target).selectedItem)
 				return;
-			
+
 			focusSelectedTexture();
 		}
-		
+
 		private function focusSelectedTexture():void
 		{
-			if(!_textureList.selectedItem)
+			if (!_textureList.selectedItem)
 				return;
-			
+
 			// bound
 			var bound:Rectangle = _textureList.selectedItem["bound"];
 			//trace(List(event.target).selectedItem["bound"]);
-			
+
 			_selectionCanvas.graphics.clear();
 			_selectionCanvas.graphics.lineStyle(1, 0xFF0000, 0.5);
 			_selectionCanvas.graphics.beginFill(0xFF0000, 0);
-			_selectionCanvas.graphics.drawRect(350 + _PICKERLIST_WIDTH + bound.x,  _container.y + 32 * 2 + bound.y, bound.width, bound.height);
+			_selectionCanvas.graphics.drawRect(350 + _PICKERLIST_WIDTH + bound.x, _container.y + 32 * 2 + bound.y, bound.width, bound.height);
 			_selectionCanvas.graphics.endFill();
 		}
-		
+
 		// footer -----------------------------------------------------------------------
 
 		private var _footer:Header;
@@ -316,7 +316,7 @@ package com.sleepydesign.flumpy.screens
 			_textureList.width = _pickerList.width;
 			_textureList.height = _container.height - _textureList.y;
 			_textureList.validate();
-			
+
 			focusSelectedTexture();
 
 			// TODO : responsive to movie container size, test with bella
@@ -396,8 +396,12 @@ package com.sleepydesign.flumpy.screens
 		// selected
 		private var _selectionCanvas:flash.display.Sprite = new flash.display.Sprite();
 
+		// clear -----------------------------------------------------------------------
+
 		public function clear():void
 		{
+			trace(" ! " + this + ".clear");
+
 			if (_atlasCanvas)
 			{
 				_atlasCanvas.removeChildren();
@@ -416,6 +420,8 @@ package com.sleepydesign.flumpy.screens
 					_selectionCanvas.parent.removeChild(_selectionCanvas);
 			}
 		}
+
+		// dispose -----------------------------------------------------------------------
 
 		override public function dispose():void
 		{

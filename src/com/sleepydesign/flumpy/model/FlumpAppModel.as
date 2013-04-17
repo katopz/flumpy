@@ -30,6 +30,10 @@ package com.sleepydesign.flumpy.model
 		public static const requestShowAnimationSignal:Signal = new Signal(Vector.<ActionItemData>, Number, Number);
 		public static const requestShowAtlasSignal:Signal = new Signal(XflLibrary, TextureAtlasData);
 		public static const requestShowLogsSignal:Signal = new Signal(String, Vector.<ParseError>);
+		
+		// clear -----------------------------------------------------------------------
+		
+		public static const requestClearSreenSignal:Signal = new Signal();
 	}
 }
 com.sleepydesign.flumpy.model.FlumpAppModel.init();

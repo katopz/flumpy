@@ -3,6 +3,7 @@ package com.sleepydesign.flumpy.screens
 	import com.sleepydesign.flumpy.core.ExportHelper;
 	import com.sleepydesign.flumpy.model.ActionItemData;
 	import com.sleepydesign.flumpy.model.AssetItemData;
+	import com.sleepydesign.flumpy.model.FlumpAppModel;
 
 	import feathers.controls.Button;
 	import feathers.controls.GroupedList;
@@ -21,7 +22,7 @@ package com.sleepydesign.flumpy.screens
 
 	[Event(name = "showVertical", type = "starling.events.Event")]
 
-	public class MainMenuScreen extends Screen
+	public class MainMenuScreen extends Screen implements IFlumpyScreen
 	{
 		public static const SHOW_VERTICAL:String = "showVertical";
 
@@ -118,6 +119,9 @@ package com.sleepydesign.flumpy.screens
 				_ioList.dataProvider.updateItemAt(1);
 			}
 
+			clear();
+
+			// add all items
 			for each (var flumpItem:FlumpItem in flumpItems)
 			{
 				trace("item.fileName:" + flumpItem.fileName);
@@ -127,15 +131,12 @@ package com.sleepydesign.flumpy.screens
 
 		public function addAssetItem(filename:String, invalidateSignal:Signal):void
 		{
-			if (!_assetList.dataProvider)
-				_assetList.dataProvider = new ListCollection;
-
 			var assetItemData:AssetItemData = new AssetItemData(_assetList.dataProvider.length, filename, invalidateSignal);
 
 			_assetList.dataProvider.addItem(assetItemData.toObject());
 
 			// watch for update
-			assetItemData.updateSignal.add(onAssetItemDataUpdate);
+			assetItemData.updateSignal.addOnce(onAssetItemDataUpdate);
 		}
 
 		private function onAssetItemDataUpdate(index:int, assetItemDataObject:Object):void
@@ -172,6 +173,24 @@ package com.sleepydesign.flumpy.screens
 		{
 			var list:List = event.target as List;
 			DetailScreen.showItemAt(list.selectedIndex);
+		}
+
+		// clear -----------------------------------------------------------------------
+
+		public function clear():void
+		{
+			trace(" ! " + this + ".clear");
+
+			// clear old screen
+			FlumpAppModel.requestClearSreenSignal.dispatch();
+
+			// clear old items
+			if (_assetList.dataProvider)
+				_assetList.dataProvider.removeAll();
+
+			_assetList.dataProvider = new ListCollection;
+
+			_assetList.deselect();
 		}
 	}
 }

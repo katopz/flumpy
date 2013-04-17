@@ -27,7 +27,7 @@ package com.sleepydesign.flumpy.screens
 
 	[Event(name = "complete", type = "starling.events.Event")]
 
-	public class DetailScreen extends PanelScreen
+	public class DetailScreen extends PanelScreen implements IFlumpyScreen
 	{
 		// mediator.startup
 		public static const initializedSignal:Signal = new Signal(DetailScreen);
@@ -57,7 +57,7 @@ package com.sleepydesign.flumpy.screens
 
 		private function initMediator():void
 		{
-
+			FlumpAppModel.requestClearSreenSignal.add(clear);
 		}
 
 		// layout -----------------------------------------------------------------------
@@ -119,6 +119,10 @@ package com.sleepydesign.flumpy.screens
 			_transitionManager.clearStack();
 			_transitionManager.skipNextTransition = true;
 
+			// clear
+			if (_navigator.activeScreen)
+				IFlumpyScreen(_navigator.activeScreen).clear();
+
 			// bind initial
 			whenScreenInitialized(screenID);
 
@@ -159,9 +163,6 @@ package com.sleepydesign.flumpy.screens
 
 					LogsScreen.initializedSignal.addOnce(function(logsScreen:LogsScreen):void
 					{
-						if (!ExportHelper.logs || ExportHelper.logs.length <= 0)
-							return;
-
 						// injection 
 						FlumpAppModel.requestShowLogsSignal.dispatch(currentAssetID, ExportHelper.logs);
 					});
@@ -213,6 +214,16 @@ package com.sleepydesign.flumpy.screens
 					FlumpAppModel.requestShowLogsSignal.dispatch(currentAssetID, ExportHelper.logs);
 					break;
 			}
+		}
+
+		// clear -----------------------------------------------------------------------
+
+		public function clear():void
+		{
+			trace(" ! " + this + ".clear");
+
+			if (_navigator.activeScreen)
+				IFlumpyScreen(_navigator.activeScreen).clear();
 		}
 	}
 }

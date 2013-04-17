@@ -18,7 +18,6 @@ package
 		- [export] disable button that shouldn't press
 		- [export] export each item
 		- [atlas] change width/height info
-
 		*/
 
 		public static function importFolder():IWork

@@ -103,9 +103,8 @@ package com.sleepydesign.flumpy.core
 
 		public static function displayLibraryItem(name:String):void
 		{
-
-			while (_container.numChildren > 0)
-				_container.removeChildAt(0);
+			clear();
+			
 			/*
 						_previewBounds = _previewSprite.bounds;
 						_container.addChild(_previewSprite);
@@ -122,6 +121,12 @@ package com.sleepydesign.flumpy.core
 			// animate it
 			if (_previewSprite is Movie)
 				Starling.juggler.add(Movie(_previewSprite));
+		}
+		
+		public static function clear():void
+		{
+			while (_container.numChildren > 0)
+				_container.removeChildAt(0);
 		}
 	}
 }
